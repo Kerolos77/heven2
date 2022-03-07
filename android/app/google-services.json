@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "438645778230",
+    "project_id": "heven-2",
+    "storage_bucket": "heven-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438645778230:android:2bb4dee9a1e9a2632b7597",
+        "android_client_info": {
+          "package_name": "com.example.heven2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438645778230-td87emboet791asek0f2nm8io60kb2kk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.heven2",
+            "certificate_hash": "6427f31ec4d78c2e47daff0cd12e771b97ec8db0"
+          }
+        },
+        {
+          "client_id": "438645778230-l4sgboakpgr2flaqqt3mjindlg7r09j1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQss-dS7nj0bJ1Sxc_FOY3hifM4CBBAAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438645778230-l4sgboakpgr2flaqqt3mjindlg7r09j1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

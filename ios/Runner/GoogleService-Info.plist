@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>438645778230-ak1nvaddp7q1g4beo920sc2qg1nsssoo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.438645778230-ak1nvaddp7q1g4beo920sc2qg1nsssoo</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>438645778230-td87emboet791asek0f2nm8io60kb2kk.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC_sF52BaiZN4_zSQNXFvImMLcrWIrSIoI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>438645778230</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.heven2</string>
+	<key>PROJECT_ID</key>
+	<string>heven-2</string>
+	<key>STORAGE_BUCKET</key>
+	<string>heven-2.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:438645778230:ios:0e918e1dee88e9a12b7597</string>
+</dict>
+</plist>
