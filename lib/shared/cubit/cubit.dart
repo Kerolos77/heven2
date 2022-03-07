@@ -35,7 +35,7 @@ class cubit extends Cubit<States> {
 
   bool passconfirmflag = false;
 
-  String path = 'Heven5Data.db';
+  String path = 'Heven4Data.db';
 
   bool fbflag = false;
 
@@ -231,13 +231,12 @@ class cubit extends Cubit<States> {
     return dif;
   }
 
-  Future<bool?> snack(String title, Color color) {
+  Future<bool?> toast(String title, Color color) {
     return Fluttertoast.showToast(
-        msg: "${title} Sucssflly",
+        msg: "${title}",
         toastLength: Toast.LENGTH_LONG,
-        backgroundColor: color,
-        textColor: Colors.black,
-        fontSize: 16.0
+        backgroundColor:Colors.grey ,
+        textColor: color,
     );
 
 
@@ -335,4 +334,6 @@ class cubit extends Cubit<States> {
       print(Error.toString());
     });
   }
+
+
 }

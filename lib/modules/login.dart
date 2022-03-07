@@ -31,7 +31,6 @@ class _LoginState extends State<Login> {
                   toastLength: Toast.LENGTH_LONG,
                   backgroundColor: Colors.black26,
                   textColor: Colors.white,
-                  fontSize: 16.0
               );
             }
 
@@ -100,27 +99,27 @@ class _LoginState extends State<Login> {
                             height: 30,
                           ),
 
-                          // ConditionalBuilder(
-                          //     condition: state is! LoginState,
-                          //     builder: CircularProgressIndicator(),
-                          //     fallback: fallback
-                          // );
-                          defultBotton(
-                            isdone: cub.loginpassflag && cub.loginusernameflag,
-                              text: 'Login',
-                              onpress: () {
-                                print(usernamecontrol.text);
-                                print(passwordcontrol.text);
-                                cub.login(email: usernamecontrol.text, password: passwordcontrol.text);
-                                if (state is LoginState) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                      builder: (context) =>home(),
-                                  ));
-                                }
-                              }
+                          ConditionalBuilder(
+                              condition: state is! LoginLoadingState ,
+                              builder:(context) => defultBotton(
+                                  isdone: cub.loginpassflag && cub.loginusernameflag,
+                                  text: 'Login',
+                                  onpress: () {
+                                    print(usernamecontrol.text);
+                                    print(passwordcontrol.text);
+                                    cub.login(email: usernamecontrol.text, password: passwordcontrol.text);
+                                    if (state is LoginState) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>home(),
+                                          ));
+                                    }
+                                  }
+                              ),
+                              fallback: (context) =>CupertinoActivityIndicator(),
                           ),
+
                           SizedBox(
                             height: 10,
                           ),

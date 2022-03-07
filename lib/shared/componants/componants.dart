@@ -100,11 +100,9 @@ Widget itemnewemp(Map model, context, cubit cub) => Padding(
                   );
                   cub.update(isatend: 1, id: model['id']);
                   print("isatend = ${model['isatend']}");
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(cub.snack("Presence ", Colors.green));
+                  cub.toast("Acceptance", Colors.green);
                 } else
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(cub.snack("Presence ", Colors.red));
+                  cub.toast("Reject", Colors.red);
               },
               icon: Icon(
                 Icons.access_time,
@@ -120,11 +118,9 @@ Widget itemnewemp(Map model, context, cubit cub) => Padding(
                       date:
                           '${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
                   cub.update(isatend: 0, id: model['id']);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(cub.snack("departure ", Colors.green));
+                  cub.toast("Acceptance", Colors.green);
                 } else
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(cub.snack("departure ", Colors.red));
+                  cub.toast("Reject", Colors.red);
               },
               icon: Icon(
                 Icons.access_time,
