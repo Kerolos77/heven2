@@ -35,7 +35,7 @@ class cubit extends Cubit<States> {
 
   bool passconfirmflag = false;
 
-  String path = 'Heven4Data.db';
+  String path = 'Heven5Data.db';
 
   bool fbflag = false;
 
@@ -327,7 +327,6 @@ class cubit extends Cubit<States> {
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.green,
           textColor: Colors.white,
-          fontSize: 16.0
       );
     }).catchError((Error){
         emit(ErrorState(Error.toString()));

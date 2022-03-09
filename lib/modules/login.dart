@@ -100,21 +100,21 @@ class _LoginState extends State<Login> {
                           ),
 
                           ConditionalBuilder(
-                              condition: state is! LoginLoadingState ,
+                              condition: state is! LoginState,
                               builder:(context) => defultBotton(
                                   isdone: cub.loginpassflag && cub.loginusernameflag,
                                   text: 'Login',
                                   onpress: () {
+                                    print("${state}++++++++++++++++++++++");
                                     print(usernamecontrol.text);
                                     print(passwordcontrol.text);
                                     cub.login(email: usernamecontrol.text, password: passwordcontrol.text);
-                                    if (state is LoginState) {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>home(),
                                           ));
-                                    }
+
                                   }
                               ),
                               fallback: (context) =>CupertinoActivityIndicator(),

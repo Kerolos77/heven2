@@ -27,8 +27,35 @@ class home extends StatelessWidget {
           return Scaffold(
             key: scaffoldkey,
             appBar: AppBar(
+              centerTitle: true,
               title: Text(
                 cub.apptitle[cub.cruntindex],
+              ),
+
+            ),
+            drawer: Drawer(
+              child: Column(
+                children: [
+                  Image(
+                    image: AssetImage('images/Movie Night-cuate.png'),
+                    height: 250,
+                  ),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+
+                        itemmenu(titel: 'Profil', icon: Icons.person_outline, iconcolor: Colors.cyan),
+                        SizedBox(height: 20,),
+                        itemmenu(titel: 'Wish List', icon: Icons.favorite_outline_outlined, iconcolor: Colors.cyan),
+                        SizedBox(height: 20,),
+                        itemmenu(titel: 'Downloads', icon: Icons.download_outlined, iconcolor: Colors.cyan),
+                        SizedBox(height: 20,),
+                        itemmenu(titel: 'Settings', icon: Icons.settings, iconcolor: Colors.cyan),
+                      ],
+                    ),
+                  )
+
+                ],
               ),
             ),
             body: ConditionalBuilder(
