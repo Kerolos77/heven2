@@ -353,3 +353,47 @@ Widget valedaterow({
         ),
       ],
     );
+
+Widget itemmenu({
+  required String titel,
+  required IconData icon,
+  required Color iconcolor,
+}) =>
+    Padding(
+      padding: const EdgeInsetsDirectional.only(
+        start: 10,
+        end: 10,
+
+      ),
+      child: Container(
+
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: iconcolor,
+                size: 30,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Text(
+                titel,
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              )
+            ],
+          ),
+        ),
+        decoration: BoxDecoration(
+            color: Colors.black12,
+            borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+                topLeft: Radius.circular(20))),
+      ),
+    );
