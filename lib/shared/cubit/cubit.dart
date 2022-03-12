@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:heven2/models/UserDataModel.dart';
 import 'package:heven2/modules/article.dart';
 import 'package:heven2/modules/atendans.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'heven_states.dart';
 
 class cubit extends Cubit<States> {
@@ -233,13 +234,11 @@ class cubit extends Cubit<States> {
 
   Future<bool?> toast(String title, Color color) {
     return Fluttertoast.showToast(
-        msg: "${title}",
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor:Colors.grey ,
-        textColor: color,
+      msg: "${title}",
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.grey,
+      textColor: color,
     );
-
-
   }
 
   void changepassflag(flag) {
@@ -292,7 +291,31 @@ class cubit extends Cubit<States> {
     emit(ChangephoneState());
   }
 
+  void CreateUser({
+    required String name,
+    required String email,
+    required String adminkey,
+    required String phone,
+    required String UID,
+  }) {
+    emit(CreateUserLoadingState());
+    UserDataModel userDataModel =
+        UserDataModel(name, email, phone, UID, adminkey);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(UID)
+        .set(userDataModel.toMap())
+        .then((value) {
+          emit(CreateUserSucsessState());
+
+    })
+        .catchError((Error) {
+          CreateUserErrorState(Error.toString());
+    });
+  }
+
   void signUp({
+    required String name,
     required String email,
     required String adminkey,
     required String phone,
@@ -304,35 +327,36 @@ class cubit extends Cubit<States> {
         .then((value) {
       print(value.user?.email);
       print(value.user?.uid);
-      emit(SignUpState());
+      CreateUser(email: email,adminkey: adminkey,name: name,phone: phone,UID: value.user!.uid);
+
     }).catchError((error) {
-      print(error);
+      emit(SignUpErrorState(error.toString()));
     });
   }
 
   void login({
-  required String email,
+    required String email,
     required String password,
-}){
+  }) {
     print(email);
     emit(LoginLoadingState());
-    FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password).then((value) {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) {
       print(value.user?.email);
       print(value.user?.uid);
-      emit(LoginState());
+      emit(LoginSucsessState());
       Fluttertoast.showToast(
-          msg: "Done",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
+        msg: "Done",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
       );
-    }).catchError((Error){
-        emit(ErrorState(Error.toString()));
+    }).catchError((Error) {
+      emit(LoginErrorState(Error.toString()));
       print(Error.toString());
     });
   }
-
-
 }

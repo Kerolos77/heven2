@@ -1,5 +1,8 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../login_screen.dart';
 import '../shared/componants/componants.dart';
@@ -25,7 +28,23 @@ class _signupState extends State<signup> {
     return BlocProvider(
         create: (BuildContext context) => cubit(),
         child: BlocConsumer<cubit, States>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is SignUpErrorState) {
+              Fluttertoast.showToast(
+                msg: state.error,
+                toastLength: Toast.LENGTH_LONG,
+                backgroundColor: Colors.red[20],
+                textColor: Colors.white,
+              );
+            }
+            if (state is CreateUserSucsessState) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ));
+            }
+          },
           builder: (context, state) {
             var cub = cubit.get(context);
             return Scaffold(
@@ -49,12 +68,10 @@ class _signupState extends State<signup> {
                             icon: Icons.perm_identity,
                             lable: 'Email',
                             validatetor: (value) {
-                              if (value.isEmpty)
-                                return 'Email is empty';
+                              if (value.isEmpty) return 'Email is empty';
                             },
                             onchange: (value) {
-                              if (value.contains('@') &&
-                                  value.contains('.com'))
+                              if (value.contains('@') && value.contains('.com'))
                                 cub.changeemailflag(true);
                               else
                                 cub.changeemailflag(false);
@@ -69,8 +86,7 @@ class _signupState extends State<signup> {
                             icon: Icons.admin_panel_settings_outlined,
                             lable: 'Admin Key',
                             validatetor: (value) {
-                              if (value.isEmpty)
-                                return 'Admin key is empty';
+                              if (value.isEmpty) return 'Admin key is empty';
                             },
                             onchange: (value) {
                               if (!value.contains('11'))
@@ -88,12 +104,9 @@ class _signupState extends State<signup> {
                             icon: Icons.title_outlined,
                             lable: 'User Name',
                             validatetor: (value) {
-                              if (value.isEmpty)
-                                return 'Name is empty';
+                              if (value.isEmpty) return 'Name is empty';
                             },
-                            onchange: (value) {
-
-                            },
+                            onchange: (value) {},
                           ),
                           SizedBox(
                             height: 10,
@@ -104,8 +117,7 @@ class _signupState extends State<signup> {
                             icon: Icons.phone,
                             lable: 'Phone',
                             validatetor: (value) {
-                              if (value.isEmpty)
-                                return 'Phone is empty';
+                              if (value.isEmpty) return 'Phone is empty';
                             },
                             onchange: (value) {
                               if (!value.contains('11'))
@@ -187,42 +199,48 @@ class _signupState extends State<signup> {
                           ),
                           valedaterow(
                               flag: cub.passdigitalflag,
-                              falsetext:
-                                  " contane digits",
+                              falsetext: " contane digits",
                               truetext: " Done"),
                           SizedBox(
                             height: 5,
                           ),
                           valedaterow(
                               flag: cub.passcapflag,
-                              falsetext:
-                                  " contane upper & lowercase letters",
+                              falsetext: " contane upper & lowercase letters",
                               truetext: " Done"),
                           SizedBox(
                             height: 5,
                           ),
                           valedaterow(
                               flag: cub.passconfirmflag,
-                              falsetext:
-                                  " not match aconfirm",
+                              falsetext: " not match aconfirm",
                               truetext: " Done"),
                           SizedBox(
                             height: 5,
                           ),
-
-                          defultBotton(
-                              isdone: cub.emailflag && cub.adminflag && cub.passcapflag && cub.passnumchar && cub.passdigitalflag && cub.passconfirmflag && cub.phoneflag,
-                              text: 'Sign Up',
-                              onpress: () {
-                                if (formkey.currentState!.validate() && cub.emailflag && cub.adminflag && cub.passcapflag && cub.passnumchar && cub.passdigitalflag && cub.passconfirmflag) {
-cub.signUp(email: emailcontrol.text, adminkey: adminkeycontrol.text, phone: phonecontrol.text, password: passwordcontrol.text);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Login(),
-                                      ));
-                                }
-                              }),
+                          ConditionalBuilder(
+                            condition: state is! LoginSucsessState,
+                            builder: (context) => defultBotton(
+                                isdone: cub.emailflag &&
+                                    cub.adminflag &&
+                                    cub.passcapflag &&
+                                    cub.passnumchar &&
+                                    cub.passdigitalflag &&
+                                    cub.passconfirmflag &&
+                                    cub.phoneflag,
+                                text: 'Sign Up',
+                                onpress: () {
+                                  if (formkey.currentState!.validate()) {
+                                    cub.signUp(
+                                        name: namecontrol.text,
+                                        email: emailcontrol.text,
+                                        adminkey: adminkeycontrol.text,
+                                        phone: phonecontrol.text,
+                                        password: passwordcontrol.text);
+                                  }
+                                }),
+                            fallback: (context) => CupertinoActivityIndicator(),
+                          ),
                         ],
                       ),
                     ),

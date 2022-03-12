@@ -25,13 +25,20 @@ class _LoginState extends State<Login> {
         create: (BuildContext context) => cubit(),
         child: BlocConsumer<cubit, States>(
           listener: (context, state) {
-            if(state is ErrorState){
+            if(state is LoginErrorState){
               Fluttertoast.showToast(
                   msg: state.error,
                   toastLength: Toast.LENGTH_LONG,
-                  backgroundColor: Colors.black26,
+                  backgroundColor: Colors.red[20],
                   textColor: Colors.white,
               );
+            }
+            if(state is LoginSucsessState){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>home(),
+                  ));
             }
 
           },
@@ -100,7 +107,7 @@ class _LoginState extends State<Login> {
                           ),
 
                           ConditionalBuilder(
-                              condition: state is! LoginState,
+                              condition: state is! LoginSucsessState,
                               builder:(context) => defultBotton(
                                   isdone: cub.loginpassflag && cub.loginusernameflag,
                                   text: 'Login',
@@ -109,11 +116,7 @@ class _LoginState extends State<Login> {
                                     print(usernamecontrol.text);
                                     print(passwordcontrol.text);
                                     cub.login(email: usernamecontrol.text, password: passwordcontrol.text);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>home(),
-                                          ));
+
 
                                   }
                               ),
