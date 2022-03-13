@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:heven2/models/EmpDataModel.dart';
 import 'package:heven2/models/UserDataModel.dart';
 import 'package:heven2/modules/article.dart';
 import 'package:heven2/modules/atendans.dart';
+import 'package:heven2/shared/componants/componants.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'heven_states.dart';
@@ -232,14 +234,7 @@ class cubit extends Cubit<States> {
     return dif;
   }
 
-  Future<bool?> toast(String title, Color color) {
-    return Fluttertoast.showToast(
-      msg: "${title}",
-      toastLength: Toast.LENGTH_LONG,
-      backgroundColor: Colors.grey,
-      textColor: color,
-    );
-  }
+
 
   void changepassflag(flag) {
     passflag = flag;
@@ -314,6 +309,41 @@ class cubit extends Cubit<States> {
     });
   }
 
+  void CreateEmp({
+    required String name,
+    required String salary,
+    required String phone,
+    required String ID,
+    required int isatend,
+  }) {
+    emit(CreateEmpLoadingState());
+    EmpDataModel userDataModel =
+    EmpDataModel(name, salary, phone, ID,isatend);
+    FirebaseFirestore.instance
+        .collection('empolly')
+        .doc(ID)
+        .set(userDataModel.toMap())
+        .then((value) {
+      emit(CreateEmpSucsessState());
+
+    })
+        .catchError((Error) {
+      CreateEmpErrorState(Error.toString());
+    });
+
+    FirebaseFirestore.instance
+        .collection('empolly')
+        .doc(ID)
+        .set(userDataModel.toMap())
+        .then((value) {
+      emit(CreateEmpSucsessState());
+
+    })
+        .catchError((Error) {
+      CreateEmpErrorState(Error.toString());
+    });
+  }
+
   void signUp({
     required String name,
     required String email,
@@ -346,14 +376,7 @@ class cubit extends Cubit<States> {
       print(value.user?.email);
       print(value.user?.uid);
       emit(LoginSucsessState());
-      Fluttertoast.showToast(
-        msg: "Done",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
+      toast(msg: 'Done', backcolor: Colors.green, textcolor: Colors.black);
     }).catchError((Error) {
       emit(LoginErrorState(Error.toString()));
       print(Error.toString());

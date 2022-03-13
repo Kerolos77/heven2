@@ -8,6 +8,9 @@ import 'package:heven2/shared/cubit/heven_states.dart';
 class home extends StatelessWidget {
 
   TextEditingController namecontrol = new TextEditingController();
+  TextEditingController phonecontrol = new TextEditingController();
+  TextEditingController idcontrol = new TextEditingController();
+  TextEditingController salarycontrol = new TextEditingController();
   var scaffoldkey = GlobalKey<ScaffoldState>();
   var formkey = GlobalKey<FormState>();
 
@@ -17,8 +20,12 @@ class home extends StatelessWidget {
       create: (BuildContext context)=>cubit()..create(),
       child: BlocConsumer <cubit,States>(
         listener: (context, state) {
-          if(state is InsertDataBaseState ){
+          if(state is CreateEmpSucsessState ){
             Navigator.pop(context);
+            toast(msg: 'Done', backcolor: Colors.green, textcolor: Colors.black);
+          }
+          if(state is CreateEmpErrorState ){
+            toast(msg: state.error.toString(), backcolor: Colors.red, textcolor: Colors.black);
           }
         },
         builder: (context, state) {
@@ -71,18 +78,22 @@ class home extends StatelessWidget {
                   backgroundColor: Colors.white,
                 ),
                 FloatingActionButton(
-                  elevation: 10,
                   onPressed: () {
                     if (cub.fbflag) {
                       if (formkey.currentState!.validate()) {
-
-                        cub.insert(
+                        cub.CreateEmp(
                             name: namecontrol.text,
+                            salary: salarycontrol.text,
+                            phone: phonecontrol.text,
+                            ID: idcontrol.text,
                             isatend: 0
                         );
                       }
                     } else {
                        namecontrol.text = "";
+                       salarycontrol.text="";
+                       idcontrol.text='';
+                       phonecontrol.text='';
                        scaffoldkey.currentState?.showBottomSheet(
                              (context) => SingleChildScrollView(
                           child: Container(
@@ -98,14 +109,49 @@ class home extends StatelessWidget {
                                         height: 15,
                                       ),
                                       dfulttextfilde(
-                                          type: TextInputType.emailAddress,
+                                          type: TextInputType.name,
                                           control: namecontrol,
                                           icon: Icons.title,
-                                          lable: 'Emplloy Name',
+                                          lable: 'Name',
                                           validatetor: (value) {
                                             if (value.isEmpty)
-                                              return 'Emplloy Name must not be empty';
-                                            return null;
+                                              return 'Cann be Empty';
+                                          }),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      dfulttextfilde(
+                                          type: TextInputType.number,
+                                          control: phonecontrol,
+                                          icon: Icons.call,
+                                          lable: 'Phone',
+                                          validatetor: (value) {
+                                            if (value.isEmpty)
+                                              return 'Cann be Empty';
+                                          }),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      dfulttextfilde(
+                                          type: TextInputType.number,
+                                          control: idcontrol,
+                                          icon: Icons.card_membership_outlined,
+                                          lable: 'Nathonal ID',
+                                          validatetor: (value) {
+                                            if (value.isEmpty)
+                                              return 'Cann be Empty';
+                                          }),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      dfulttextfilde(
+                                          type: TextInputType.number,
+                                          control: salarycontrol,
+                                          icon: Icons.monetization_on_outlined,
+                                          lable: 'Salary by week',
+                                          validatetor: (value) {
+                                            if (value.isEmpty)
+                                              return 'Cann be Empty';
                                           }),
                                      ],
                                   ),

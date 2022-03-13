@@ -25,22 +25,21 @@ class _LoginState extends State<Login> {
         create: (BuildContext context) => cubit(),
         child: BlocConsumer<cubit, States>(
           listener: (context, state) {
-            if(state is LoginErrorState){
+            if (state is LoginErrorState) {
               Fluttertoast.showToast(
-                  msg: state.error,
-                  toastLength: Toast.LENGTH_LONG,
-                  backgroundColor: Colors.red[20],
-                  textColor: Colors.white,
+                msg: state.error,
+                toastLength: Toast.LENGTH_LONG,
+                backgroundColor: Colors.red[20],
+                textColor: Colors.white,
               );
             }
-            if(state is LoginSucsessState){
+            if (state is LoginSucsessState) {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>home(),
+                    builder: (context) => home(),
                   ));
             }
-
           },
           builder: (context, state) {
             var cub = cubit.get(context);
@@ -69,60 +68,68 @@ class _LoginState extends State<Login> {
                             height: 30,
                           ),
                           dfultlogintextfilde(
-                            type: TextInputType.emailAddress,
-                            control: usernamecontrol,
-                            icon: Icons.perm_identity,
-                            lable: 'Email',
-                              onchange: (value){
-                                if(!value.toString().isEmpty)
+                              type: TextInputType.emailAddress,
+                              control: usernamecontrol,
+                              icon: Icons.perm_identity,
+                              lable: 'Email',
+                              validatetor: (value) {
+                                if (value.toString().isEmpty) {
+                                  return "Cann be Empty";
+                                }
+                              },
+                              onchange: (value) {
+                                if (!value.toString().isEmpty)
                                   cub.changeloginusernameflag(true);
                                 else
                                   cub.changeloginusernameflag(false);
-                              }
-                          ),
+                              }),
                           SizedBox(
                             height: 30,
                           ),
                           sufixlogintextfilde(
-                            type: TextInputType.visiblePassword,
-                            obscure: cub.passflag,
-                            sufixicon: cub.passflag
-                                ? Icons.remove_red_eye_outlined
-                                : Icons.visibility_off_outlined,
-                            control: passwordcontrol,
-                            prifixicon: Icons.lock_outline,
-                            lable: 'Password',
-                            onpresssufix: () {
-                              cub.changepassflag(!cub.passflag);
-                            },
-                            onchange: (value){
-                              if(!value.toString().isEmpty)
-                                cub.changeloginpassflag(true);
-                              else
-                                cub.changeloginpassflag(false);
-                            }
-                          ),
+                              type: TextInputType.visiblePassword,
+                              obscure: cub.passflag,
+                              sufixicon: cub.passflag
+                                  ? Icons.remove_red_eye_outlined
+                                  : Icons.visibility_off_outlined,
+                              control: passwordcontrol,
+                              prifixicon: Icons.lock_outline,
+                              lable: 'Password',
+                              onpresssufix: () {
+                                cub.changepassflag(!cub.passflag);
+                              },
+                              validatetor: (value) {
+                                if (value.toString().isEmpty) {
+                                  return "Cann be Empty";
+                                }
+                              },
+                              onchange: (value) {
+                                if (!value.toString().isEmpty)
+                                  cub.changeloginpassflag(true);
+                                else
+                                  cub.changeloginpassflag(false);
+                              }),
                           SizedBox(
                             height: 30,
                           ),
-
                           ConditionalBuilder(
-                              condition: state is! LoginSucsessState,
-                              builder:(context) => defultBotton(
-                                  isdone: cub.loginpassflag && cub.loginusernameflag,
-                                  text: 'Login',
-                                  onpress: () {
+                            condition: state is! LoginSucsessState,
+                            builder: (context) => defultBotton(
+                                isdone:
+                                    cub.loginpassflag && cub.loginusernameflag,
+                                text: 'Login',
+                                onpress: () {
+                                  if (formkey.currentState!.validate()) {
                                     print("${state}++++++++++++++++++++++");
                                     print(usernamecontrol.text);
                                     print(passwordcontrol.text);
-                                    cub.login(email: usernamecontrol.text, password: passwordcontrol.text);
-
-
+                                    cub.login(
+                                        email: usernamecontrol.text,
+                                        password: passwordcontrol.text);
                                   }
-                              ),
-                              fallback: (context) =>CupertinoActivityIndicator(),
+                                }),
+                            fallback: (context) => CupertinoActivityIndicator(),
                           ),
-
                           SizedBox(
                             height: 10,
                           ),
@@ -131,23 +138,25 @@ class _LoginState extends State<Login> {
                             children: [
                               Text(
                                 'Dont Have An Account ?',
-                                style : TextStyle(
+                                style: TextStyle(
                                   fontSize: 10.0,
-                                  color : Colors.black,
+                                  color: Colors.black,
                                 ),
                               ),
                               TextButton(
-                                onPressed : (){
+                                onPressed: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>signup(),
+                                        builder: (context) => signup(),
                                       ));
                                   print('sign up');
                                 },
                                 child: Text(
                                   'Sign Up',
-                                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],

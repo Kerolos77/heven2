@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:heven2/shared/cubit/cubit.dart';
@@ -26,14 +27,32 @@ class _articleState extends State<article> {
           listener: (BuildContext context, States state) {},
           builder: (BuildContext context, States state) {
             cubit cub = cubit.get(context);
-
-            return Center(
-              child: IconButton(
-                onPressed: () {
+            final _formKey = GlobalKey<FormState>();
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("Flutter"),
+              ),
+              body: Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text("Open Popup"),
+                                Text("Open Popup"),
+                                Text("Open Popup"),
+                                Text("Open Popup"),
+                                Text("Open Popup"),
+                              ],
+                            ),
+                          );
+                        });
                   },
-                icon: Icon(
-                  Icons.access_time,
-                  color: cub.atendcolor,
+                  child: Text("Open Popup"),
                 ),
               ),
             );

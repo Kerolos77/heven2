@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:heven2/modules/atendScreen.dart';
 
 import 'package:heven2/shared/cubit/cubit.dart';
@@ -25,13 +26,13 @@ Widget dfulttextfilde({
       readOnly: enablekey,
       decoration: InputDecoration(
         labelText: lable,
-        labelStyle: TextStyle(color: Colors.white),
+        labelStyle: TextStyle(color: Colors.black),
         filled: true,
-        fillColor: Colors.black12,
+        fillColor: Colors.grey.shade200,
         prefixIcon: /**/ Icon(
           icon,
-          size: 20,
-          color: Colors.white,
+          size: 25,
+          color: Colors.black,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
@@ -40,113 +41,154 @@ Widget dfulttextfilde({
     );
 
 Widget itemnewemp(Map model, context, cubit cub) => Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Container(
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.black,
-                  child: Text(
-                    '${model['id']}',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.only(top: 5,bottom: 5,left: 10,right: 10),
+      child: GestureDetector(
+        onTap: (){
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Name : ${model['name']}',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Text(
+                        'Phone : 01225536602',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Text(
+                        'ID : 29912231401235',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                    ],
                   ),
-                ),
-                CircleAvatar(
-                  radius: 7,
-                  backgroundColor: Colors.white,
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    end: 2,
-                    bottom: 2,
-                  ),
-                  child: CircleAvatar(
-                    radius: 5,
-                    backgroundColor:
-                        model['isatend'] == 1 ? Colors.green : Colors.red,
-                  ),
-                ),
-              ],
-              alignment: AlignmentDirectional.bottomEnd,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Text(
-                '${model['name']}',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                if (model['isatend'] == 0) {
-                  print("press");
-                  cub.insertatend(
-                    date: "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                    empid: model['id'],
-                    endtime: "00:00AM",
-                    starttime: "${DateFormat('hh:mma').format(DateTime.now())}",
-                  );
-                  cub.update(isatend: 1, id: model['id']);
-                  print("isatend = ${model['isatend']}");
-                  cub.toast("Acceptance", Colors.green);
-                } else
-                  cub.toast("Reject", Colors.red);
-              },
-              icon: Icon(
-                Icons.access_time,
-                color: Colors.green,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                if (model['isatend'] == 1) {
-                  cubit.get(context).updateatend(
-                      endtime: '${DateFormat('hh:mma').format(DateTime.now())}',
-                      id: model['id'],
-                      date:
-                          '${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
-                  cub.update(isatend: 0, id: model['id']);
-                  cub.toast("Acceptance", Colors.green);
-                } else
-                  cub.toast("Reject", Colors.red);
-              },
-              icon: Icon(
-                Icons.access_time,
-                color: Colors.red,
-              ),
-              disabledColor: Colors.grey,
-            ),
-            IconButton(
-              onPressed: () {
-                cub.getatend(cub.database, model['id']);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AtendScreen(
-                            name: model['name'],
-                            id: model['id'],
-                            cub: cub,
-                          )),
                 );
-              },
-              icon: Icon(
-                Icons.slideshow,
-                color: Colors.black,
+              });
+        },
+        child: Material(
+          elevation:15,
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${model['name']}',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '29912231401235',
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (model['isatend'] == 0) {
+                        print("press");
+                        cub.insertatend(
+                          date: "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
+                          empid: model['id'],
+                          endtime: "00:00AM",
+                          starttime: "${DateFormat('hh:mma').format(DateTime.now())}",
+                        );
+                        cub.update(isatend: 1, id: model['id']);
+                        print("isatend = ${model['isatend']}");
+                        toast(msg: 'Acceptance', backcolor: Colors.green, textcolor: Colors.black);
+
+                      } else
+                        toast(msg: 'Reject', backcolor: Colors.red, textcolor: Colors.black);
+
+                    },
+                    icon: Icon(
+                      Icons.access_time,
+                      color: Colors.green.shade300,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (model['isatend'] == 1) {
+                        cubit.get(context).updateatend(
+                            endtime: '${DateFormat('hh:mma').format(DateTime.now())}',
+                            id: model['id'],
+                            date:
+                                '${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
+                        cub.update(isatend: 0, id: model['id']);
+                        toast(msg: 'Acceptance', backcolor: Colors.green, textcolor: Colors.black);
+                      } else
+                        toast(msg: 'Reject', backcolor: Colors.red, textcolor: Colors.black);
+                    },
+                    icon: Icon(
+                      Icons.access_time,
+                      color: Colors.red.shade200,
+                    ),
+                    disabledColor: Colors.grey,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cub.getatend(cub.database, model['id']);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AtendScreen(
+                                  name: model['name'],
+                                  id: model['id'],
+                                  cub: cub,
+                                )),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.slideshow,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+            decoration: BoxDecoration(
+              color: Colors.white,
+              // borderRadius: BorderRadius.circular(10),
+              border: Border(
+                bottom: BorderSide(width: 3.0, color: model['isatend'] == 1 ? Colors.green.shade300 : Colors.red.shade200 ),
+                // color: model['isatend'] == 1 ? Colors.green : Colors.red,
+                // width: 2
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -173,7 +215,7 @@ Widget itematend(Map model, context, cubit cub) => Padding(
                   child: Text(
                     '${model['starttime']}',
                     style: TextStyle(
-                      color: Colors.green,
+                      color: Colors.green.shade300,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
@@ -183,7 +225,7 @@ Widget itematend(Map model, context, cubit cub) => Padding(
                   child: Text(
                     '${model['endtime']}',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Colors.red.shade200,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
@@ -397,3 +439,16 @@ Widget itemmenu({
                 topLeft: Radius.circular(20))),
       ),
     );
+
+Future<bool?> toast({
+  required String msg,
+  required Color backcolor,
+  required Color textcolor,
+})=>Fluttertoast.showToast(
+msg: "Done",
+toastLength: Toast.LENGTH_LONG,
+gravity: ToastGravity.BOTTOM,
+timeInSecForIosWeb: 1,
+backgroundColor: backcolor,
+textColor: textcolor,
+);
