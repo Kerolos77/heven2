@@ -7,8 +7,8 @@ class EmpDataModel {
 
   EmpDataModel(this.name, this.salary, this.phone,  this.ID,this.isatend);
 
-  EmpDataModel.fromJson(Map<String,dynamic> json){
-    name = json['name'];
+  EmpDataModel.fromJson(Map<String,dynamic>? json){
+    name = json!['name'];
     salary = json['salary'];
     phone = json['phone'];
     ID = json['id'];

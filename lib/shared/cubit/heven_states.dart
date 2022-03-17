@@ -89,3 +89,14 @@ class CreateEmpErrorState extends States {
     error = Error;
   }
 }
+
+class GetEmpSucsessState extends States {}
+
+class GetEmpLoadingState extends States {}
+
+class GetEmpErrorState extends States {
+  var error;
+  GetEmpErrorState(String Error) {
+    error = Error;
+  }
+}

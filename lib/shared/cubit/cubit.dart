@@ -11,6 +11,7 @@ import 'package:heven2/modules/atendans.dart';
 import 'package:heven2/shared/componants/componants.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 import 'heven_states.dart';
 
 class cubit extends Cubit<States> {
@@ -234,8 +235,6 @@ class cubit extends Cubit<States> {
     return dif;
   }
 
-
-
   void changepassflag(flag) {
     passflag = flag;
     emit(ChangePassFlagState());
@@ -286,6 +285,13 @@ class cubit extends Cubit<States> {
     emit(ChangephoneState());
   }
 
+
+
+///////////////fire base
+  late EmpDataModel model;
+  List<dynamic> modelList=[];
+
+  ////firestore functions
   void CreateUser({
     required String name,
     required String email,
@@ -295,17 +301,15 @@ class cubit extends Cubit<States> {
   }) {
     emit(CreateUserLoadingState());
     UserDataModel userDataModel =
-        UserDataModel(name, email, phone, UID, adminkey);
+        UserDataModel(name, email, phone, UID, adminkey, false);
     FirebaseFirestore.instance
         .collection('users')
         .doc(UID)
         .set(userDataModel.toMap())
         .then((value) {
-          emit(CreateUserSucsessState());
-
-    })
-        .catchError((Error) {
-          CreateUserErrorState(Error.toString());
+      emit(CreateUserSucsessState());
+    }).catchError((Error) {
+      CreateUserErrorState(Error.toString());
     });
   }
 
@@ -315,35 +319,51 @@ class cubit extends Cubit<States> {
     required String phone,
     required String ID,
     required int isatend,
-  }) {
+  }) async {
     emit(CreateEmpLoadingState());
-    EmpDataModel userDataModel =
-    EmpDataModel(name, salary, phone, ID,isatend);
+    EmpDataModel userDataModel = EmpDataModel(name, salary, phone, ID, isatend);
     FirebaseFirestore.instance
         .collection('empolly')
         .doc(ID)
         .set(userDataModel.toMap())
         .then((value) {
       emit(CreateEmpSucsessState());
-
-    })
-        .catchError((Error) {
-      CreateEmpErrorState(Error.toString());
-    });
-
-    FirebaseFirestore.instance
-        .collection('empolly')
-        .doc(ID)
-        .set(userDataModel.toMap())
-        .then((value) {
-      emit(CreateEmpSucsessState());
-
-    })
-        .catchError((Error) {
+    }).catchError((Error) {
       CreateEmpErrorState(Error.toString());
     });
   }
 
+  String CreateAtendId() {
+    var uuid = Uuid();
+    var v1 = uuid.v1();
+    return v1;
+  }
+
+  //  void getMarker() async{
+  //   const snapshot = await firebase.firestore().collection('events').get()
+  //   return snapshot.docs.map(doc => doc.data());
+  // }
+
+  void GetEmp({
+    required String ID,
+  }) async{
+    emit(GetEmpLoadingState());
+    FirebaseFirestore.instance
+        .collection('empolly')
+        .get()
+        .then((value) {
+
+      print(value);
+      // model = EmpDataModel.fromJson(value);
+      print(value);
+      emit(GetEmpSucsessState());
+    }).catchError((error) {
+      print(error.toString());
+      emit(GetEmpErrorState(error.toString()));
+    });
+  }
+
+  ///// fire Auth funcion
   void signUp({
     required String name,
     required String email,
@@ -357,8 +377,12 @@ class cubit extends Cubit<States> {
         .then((value) {
       print(value.user?.email);
       print(value.user?.uid);
-      CreateUser(email: email,adminkey: adminkey,name: name,phone: phone,UID: value.user!.uid);
-
+      CreateUser(
+          email: email,
+          adminkey: adminkey,
+          name: name,
+          phone: phone,
+          UID: value.user!.uid);
     }).catchError((error) {
       emit(SignUpErrorState(error.toString()));
     });

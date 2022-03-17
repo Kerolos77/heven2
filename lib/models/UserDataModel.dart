@@ -4,8 +4,10 @@ class UserDataModel {
   late String phone;
   late String UID;
   late String adminkey;
+  late bool isvrify;
 
-  UserDataModel(this.name, this.email, this.phone, this.UID, this.adminkey);
+
+  UserDataModel(this.name, this.email, this.phone, this.UID, this.adminkey,this.isvrify);
 
   UserDataModel.fromJson(Map<String,dynamic> json){
     email = json['email'];
@@ -13,6 +15,7 @@ class UserDataModel {
     phone = json['phone'];
     UID = json['uid'];
     adminkey = json['adminkey'];
+    isvrify = json['isvrify'];
   }
 
   Map<String,dynamic> toMap(){
@@ -22,6 +25,7 @@ class UserDataModel {
       'phone':phone,
       'adminkey':adminkey,
       'uid':UID,
+      'isvrify':isvrify,
     };
   }
 

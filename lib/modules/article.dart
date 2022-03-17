@@ -8,8 +8,10 @@ import 'package:heven2/shared/cubit/heven_states.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:uuid/uuid.dart';
 
 import '../mobile.dart';
+import '../shared/componants/componants.dart';
 
 class article extends StatefulWidget {
   const article({Key? key}) : super(key: key);
@@ -33,29 +35,17 @@ class _articleState extends State<article> {
                 title: Text("Flutter"),
               ),
               body: Center(
-                child: RaisedButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text("Open Popup"),
-                                Text("Open Popup"),
-                                Text("Open Popup"),
-                                Text("Open Popup"),
-                                Text("Open Popup"),
-                              ],
-                            ),
-                          );
-                        });
-                  },
-                  child: Text("Open Popup"),
+                child:defultBotton(
+                    isdone:true,
+                    text: 'Login',
+                    onpress: () {
+                      cub.GetEmp(ID: '29912231401235');
+                      }
+                    )
+                  
                 ),
-              ),
-            );
+              );
+            
           }),
     );
   }
