@@ -84,7 +84,6 @@ class CreateEmpSucsessState extends States {}
 class CreateEmpLoadingState extends States {}
 
 class CreateEmpErrorState extends States {
-
   var error;
   CreateEmpErrorState(String Error) {
     error = Error;
