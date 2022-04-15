@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:heven2/modules/atendScreen.dart';
-
+import 'package:heven2/modules/atendEmpScreen.dart';
 import 'package:heven2/shared/cubit/cubit.dart';
 import 'package:intl/intl.dart';
 
@@ -40,158 +39,214 @@ Widget dfulttextfilde({
       ),
     );
 
-Widget itemnewemp(Map model, context, cubit cub) => Padding(
-      padding: const EdgeInsets.only(top: 5,bottom: 5,left: 10,right: 10),
-      child: GestureDetector(
-        onTap: (){
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
+Widget DailogText({
+  required String lable,
+  required String model,
+}) =>
+    Text(
+      '${lable} : ${model}',
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+
+Widget itemnewemp(Map model, context, cubit cub) {
+  late String id;
+  return Padding(
+    padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+    child: GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DailogText(
+                      lable: 'Name',
+                      model: model['name'],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    DailogText(
+                      lable: 'Phone',
+                      model: model['phone'],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    DailogText(
+                      lable: 'NID',
+                      model: model['nid'],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    DailogText(
+                      lable: 'Salary',
+                      model: model['salary'],
+                    ),
+                  ],
+                ),
+              );
+            });
+      },
+      child: Material(
+        elevation: 15,
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Name : ${model['name']}',
+                        '${model['name']}',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10,),
                       Text(
-                        'Phone : 01225536602',
+                        '${model['id']}',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
+                          color: Colors.grey.shade400,
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      Text(
-                        'ID : 29912231401235',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
                     ],
                   ),
-                );
-              });
-        },
-        child: Material(
-          elevation:15,
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${model['name']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '29912231401235',
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (model['isatend'] == 0) {
-                        print("press");
-                        cub.insertatend(
-                          date: "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                          empid: model['id'],
-                          endtime: "00:00AM",
-                          starttime: "${DateFormat('hh:mma').format(DateTime.now())}",
-                        );
-                        cub.update(isatend: 1, id: model['id']);
-                        print("isatend = ${model['isatend']}");
-                        toast(msg: 'Acceptance', backcolor: Colors.green, textcolor: Colors.black);
-
-                      } else
-                        toast(msg: 'Reject', backcolor: Colors.red, textcolor: Colors.black);
-
-                    },
-                    icon: Icon(
-                      Icons.access_time,
-                      color: Colors.green.shade300,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (model['isatend'] == 1) {
-                        cubit.get(context).updateatend(
-                            endtime: '${DateFormat('hh:mma').format(DateTime.now())}',
-                            id: model['id'],
-                            date:
-                                '${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
-                        cub.update(isatend: 0, id: model['id']);
-                        toast(msg: 'Acceptance', backcolor: Colors.green, textcolor: Colors.black);
-                      } else
-                        toast(msg: 'Reject', backcolor: Colors.red, textcolor: Colors.black);
-                    },
-                    icon: Icon(
-                      Icons.access_time,
-                      color: Colors.red.shade200,
-                    ),
-                    disabledColor: Colors.grey,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      cub.getatend(cub.database, model['id']);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AtendScreen(
-                                  name: model['name'],
-                                  id: model['id'],
-                                  cub: cub,
-                                )),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (model['isatend'] == 0) {
+                      id = cub.CreateId();
+                      print("press");
+                      cub.CreateAtend(
+                        date:
+                            "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
+                        empid: model['id'],
+                        endtime: "00:00AM",
+                        starttime:
+                            "${DateFormat('hh:mma').format(DateTime.now())}",
+                        id: id,
                       );
-                    },
-                    icon: Icon(
-                      Icons.slideshow,
-                      color: Colors.black,
-                    ),
+                      cub.UpdateEmp(
+                        isatend: 1,
+                        ID: model['id'],
+                        NID: model['nid'],
+                        phone: model['phone'],
+                        name: model['name'],
+                        salary: model['salary'],
+                        lastAttendance: '$id',
+                        startTime:
+                            "${DateFormat('hh:mma').format(DateTime.now())}",
+                      );
+
+                      print("isatend = ${model['isatend']}");
+                      toast(
+                          msg: 'Acceptance',
+                          backcolor: Colors.green,
+                          textcolor: Colors.black);
+                    } else
+                      toast(
+                          msg: 'Reject',
+                          backcolor: Colors.red,
+                          textcolor: Colors.black);
+                  },
+                  icon: Icon(
+                    Icons.access_time,
+                    color: Colors.green.shade300,
                   ),
-                ],
-              ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (model['isatend'] == 1) {
+                      cub.UpdateAtend(
+                        starttime: model["startTime"],
+                        endtime:
+                            '${DateFormat('hh:mma').format(DateTime.now())}',
+                        id: model['lastAttendance'],
+                        empid: model['id'],
+                      );
+                      cub.UpdateEmp(
+                        isatend: 0,
+                        ID: model['id'],
+                        NID: model['nid'],
+                        phone: model['phone'],
+                        name: model['name'],
+                        salary: model['salary'],
+                        lastAttendance: model['lastAttendance'],
+                        startTime: model["startTime"],
+                      );
+                      toast(
+                          msg: 'Acceptance',
+                          backcolor: Colors.green,
+                          textcolor: Colors.black);
+                    } else
+                      toast(
+                          msg: 'Reject',
+                          backcolor: Colors.red,
+                          textcolor: Colors.black);
+                  },
+                  icon: Icon(
+                    Icons.access_time,
+                    color: Colors.red.shade200,
+                  ),
+                  disabledColor: Colors.grey,
+                ),
+                IconButton(
+                  onPressed: () {
+                    cub.GetAtend(
+                        date:
+                            "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
+                        empid: model['id']);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AtendScreen(
+                                name: model['name'],
+// id: model['id'],
+                                cub: cub,
+                              )),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.slideshow,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              // borderRadius: BorderRadius.circular(10),
-              border: Border(
-                bottom: BorderSide(width: 3.0, color: model['isatend'] == 1 ? Colors.green.shade300 : Colors.red.shade200 ),
-                // color: model['isatend'] == 1 ? Colors.green : Colors.red,
-                // width: 2
-              ),
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+// borderRadius: BorderRadius.circular(10),
+            border: Border(
+              bottom: BorderSide(
+                  width: 3.0,
+                  color: model['isatend'] == 1
+                      ? Colors.green.shade300
+                      : Colors.red.shade200),
+// color: model['isatend'] == 1 ? Colors.green : Colors.red,
+// width: 2
             ),
           ),
         ),
       ),
-    );
+    ),
+  );
+}
 
 Widget itematend(Map model, context, cubit cub) => Padding(
       padding: const EdgeInsets.all(10.0),
@@ -352,7 +407,9 @@ Widget sufixlogintextfilde({
               ))),
     );
 
-Widget defultBotton({required String text,required bool isdone, VoidCallback? onpress}) => Container(
+Widget defultBotton(
+        {required String text, required bool isdone, VoidCallback? onpress}) =>
+    Container(
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.only(top: 1, bottom: 1, left: 20, right: 20),
@@ -368,7 +425,7 @@ Widget defultBotton({required String text,required bool isdone, VoidCallback? on
         ),
       ),
       decoration: BoxDecoration(
-        color: isdone?Colors.black:Colors.black26,
+        color: isdone ? Colors.black : Colors.black26,
         borderRadius: BorderRadius.circular(20),
       ),
     );
@@ -390,7 +447,7 @@ Widget valedaterow({
                 color: Colors.red,
               ),
         Text(
-          flag ? truetext:falsetext,
+          flag ? truetext : falsetext,
           style: TextStyle(color: flag ? Colors.black : Colors.red),
         ),
       ],
@@ -405,10 +462,8 @@ Widget itemmenu({
       padding: const EdgeInsetsDirectional.only(
         start: 10,
         end: 10,
-
       ),
       child: Container(
-
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -444,11 +499,12 @@ Future<bool?> toast({
   required String msg,
   required Color backcolor,
   required Color textcolor,
-})=>Fluttertoast.showToast(
-msg: "Done",
-toastLength: Toast.LENGTH_LONG,
-gravity: ToastGravity.BOTTOM,
-timeInSecForIosWeb: 1,
-backgroundColor: backcolor,
-textColor: textcolor,
-);
+}) =>
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: backcolor,
+      textColor: textcolor,
+    );

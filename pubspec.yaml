@@ -45,9 +45,10 @@ dependencies:
   open_file: ^3.2.1
   permission_handler: ^9.0.1
   fluttertoast: ^8.0.9
-  uuid: ^3.0.6
+  flutter_local_notifications: ^6.0.0
+  nanoid: ^1.0.0
 
-#  firbase
+  #  firbase
   firebase_core: ^1.13.1
   firebase_auth: ^3.3.9
   cloud_firestore: ^1.0.4

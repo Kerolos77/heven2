@@ -3,15 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:heven2/models/EmpDataModel.dart';
 import 'package:heven2/models/UserDataModel.dart';
 import 'package:heven2/modules/article.dart';
 import 'package:heven2/modules/atendans.dart';
 import 'package:heven2/shared/componants/componants.dart';
 import 'package:intl/intl.dart';
+import 'package:nanoid/nanoid.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:uuid/uuid.dart';
+
+import '../../models/AtendDataModel.dart';
 import 'heven_states.dart';
 
 class cubit extends Cubit<States> {
@@ -225,16 +226,6 @@ class cubit extends Cubit<States> {
     });
   }
 
-  String subTime(String startTime, String endTime) {
-    DateTime startDate = DateFormat("hh:mma").parse(startTime);
-    DateTime endDate = DateFormat("hh:mma").parse(endTime);
-// Get the Duration using the diferrence method
-    Duration diff = endDate.difference(startDate);
-    String dif = '${diff.inHours}:${diff.inMinutes % 60}';
-
-    return dif;
-  }
-
   void changepassflag(flag) {
     passflag = flag;
     emit(ChangePassFlagState());
@@ -285,11 +276,24 @@ class cubit extends Cubit<States> {
     emit(ChangephoneState());
   }
 
+  String subTime(String startTime, String endTime) {
+    DateTime startDate = DateFormat("hh:mma").parse(startTime);
+    DateTime endDate = DateFormat("hh:mma").parse(endTime);
+    return '${endDate.hour - startDate.hour}:${endDate.minute - startDate.minute}';
+  }
 
+  String CreateId() {
+    // var uuid = Uuid();
+    var v1 = nanoid(8);
+    return v1;
+  }
 
 ///////////////fire base
-  late EmpDataModel model;
-  List<dynamic> modelList=[];
+  late EmpDataModel empModel;
+  List<dynamic> empModelList = [];
+
+  late AtendDataModel atendModel;
+  List<dynamic> atendModelList = [];
 
   ////firestore functions
   void CreateUser({
@@ -317,49 +321,157 @@ class cubit extends Cubit<States> {
     required String name,
     required String salary,
     required String phone,
-    required String ID,
-    required int isatend,
+    required String NID,
   }) async {
     emit(CreateEmpLoadingState());
-    EmpDataModel userDataModel = EmpDataModel(name, salary, phone, ID, isatend);
+    String id = CreateId();
+    EmpDataModel userDataModel =
+        EmpDataModel(name, salary, phone, id, NID, 0, "0", "00:00AM");
     FirebaseFirestore.instance
-        .collection('empolly')
-        .doc(ID)
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
+        .doc(id)
         .set(userDataModel.toMap())
         .then((value) {
+      GetEmp();
       emit(CreateEmpSucsessState());
     }).catchError((Error) {
       CreateEmpErrorState(Error.toString());
     });
   }
 
-  String CreateAtendId() {
-    var uuid = Uuid();
-    var v1 = uuid.v1();
-    return v1;
+  void CreateAtend({
+    required String date,
+    required String starttime,
+    required String endtime,
+    required String empid,
+    required String id,
+  }) async {
+    emit(CreateAtendLoadingState());
+
+    AtendDataModel userDataModel = AtendDataModel(
+        date, starttime, endtime, empid, id, subTime(starttime, endtime));
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
+        .doc(empid)
+        .collection(
+            'atend ${DateFormat('yyyy-MM').format(DateTime.parse(date))}')
+        .doc(id)
+        .set(userDataModel.toMap())
+        .then((value) {
+      GetAtend(
+        empid: empid,
+        date: date,
+      );
+      emit(CreateAtendSucsessState());
+    }).catchError((Error) {
+      CreateAtendErrorState(Error.toString());
+    });
   }
 
-  //  void getMarker() async{
-  //   const snapshot = await firebase.firestore().collection('events').get()
-  //   return snapshot.docs.map(doc => doc.data());
-  // }
-
-  void GetEmp({
-    required String ID,
-  }) async{
+  void GetEmp() async {
     emit(GetEmpLoadingState());
     FirebaseFirestore.instance
-        .collection('empolly')
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
         .get()
         .then((value) {
-
-      print(value);
-      // model = EmpDataModel.fromJson(value);
-      print(value);
+      empModelList = [];
+      for (int i = 0; i < value.docs.length; i++) {
+        empModel = EmpDataModel.fromJson(value.docs[i].data());
+        empModelList.add(empModel.toMap());
+      }
       emit(GetEmpSucsessState());
     }).catchError((error) {
       print(error.toString());
       emit(GetEmpErrorState(error.toString()));
+    });
+  }
+
+  void GetAtend({required String empid, required String date}) async {
+    emit(GetAtendLoadingState());
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
+        .doc(empid)
+        .collection(
+            'atend ${DateFormat('yyyy-MM').format(DateTime.parse(date))}')
+        .get()
+        .then((value) {
+      atendModelList = [];
+      for (int i = 0; i < value.docs.length; i++) {
+        atendModel = AtendDataModel.fromJson(value.docs[i].data());
+        atendModelList.add(atendModel.toMap());
+      }
+      emit(GetAtendSucsessState());
+    }).catchError((Error) {
+      emit(GetAtendErrorState(Error.toString()));
+    });
+  }
+
+  void UpdateAtend({
+    required String endtime,
+    required String starttime,
+    required String empid,
+    required String id,
+  }) async {
+    emit(UpdateAtendLoadingState());
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
+        .doc(empid)
+        .collection('atend ${DateFormat('yyyy-MM').format(DateTime.now())}')
+        .doc(id)
+        .update({
+      "endtime": endtime,
+      "timeInDay": subTime(starttime, endtime)
+    }).then((value) {
+      GetAtend(
+          empid: empid, date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      emit(UpdateAtendSucsessState());
+    }).catchError((Error) {
+      UpdateAtendErrorState(Error.toString());
+    });
+  }
+
+  void UpdateEmp({
+    required String name,
+    required String salary,
+    required String phone,
+    required String ID,
+    required String NID,
+    required int isatend,
+    required String lastAttendance,
+    required String startTime,
+  }) async {
+    emit(UpdateEmpLoadingState());
+    EmpDataModel EmpModel = EmpDataModel(
+      name,
+      salary,
+      phone,
+      ID,
+      NID,
+      isatend,
+      lastAttendance,
+      startTime,
+    );
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc("7YuMB3A6y1NoZZzfhKyG2MNyskG3")
+        .collection('emplloy')
+        .doc(ID)
+        .update(EmpModel.toMap())
+        .then((value) {
+      GetEmp();
+      emit(UpdateEmpSucsessState());
+    }).catchError((Error) {
+      UpdateEmpErrorState(Error.toString());
     });
   }
 
@@ -375,8 +487,8 @@ class cubit extends Cubit<States> {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
-      print(value.user?.email);
-      print(value.user?.uid);
+      // print(value.user?.email);
+      // print(value.user?.uid);
       CreateUser(
           email: email,
           adminkey: adminkey,

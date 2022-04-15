@@ -6,10 +6,9 @@ import 'package:heven2/shared/cubit/cubit.dart';
 import 'package:heven2/shared/cubit/heven_states.dart';
 
 class home extends StatelessWidget {
-
   TextEditingController namecontrol = new TextEditingController();
   TextEditingController phonecontrol = new TextEditingController();
-  TextEditingController idcontrol = new TextEditingController();
+  TextEditingController nidcontrol = new TextEditingController();
   TextEditingController salarycontrol = new TextEditingController();
   var scaffoldkey = GlobalKey<ScaffoldState>();
   var formkey = GlobalKey<FormState>();
@@ -17,15 +16,19 @@ class home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context)=>cubit()..create(),
-      child: BlocConsumer <cubit,States>(
+      create: (BuildContext context) => cubit()..GetEmp(),
+      child: BlocConsumer<cubit, States>(
         listener: (context, state) {
-          if(state is CreateEmpSucsessState ){
+          if (state is CreateEmpSucsessState) {
             Navigator.pop(context);
-            toast(msg: 'Done', backcolor: Colors.green, textcolor: Colors.black);
+            toast(
+                msg: 'Done', backcolor: Colors.green, textcolor: Colors.black);
           }
-          if(state is CreateEmpErrorState ){
-            toast(msg: state.error.toString(), backcolor: Colors.red, textcolor: Colors.black);
+          if (state is CreateEmpErrorState) {
+            toast(
+                msg: state.error.toString(),
+                backcolor: Colors.red,
+                textcolor: Colors.black);
           }
         },
         builder: (context, state) {
@@ -38,7 +41,6 @@ class home extends StatelessWidget {
               title: Text(
                 cub.apptitle[cub.cruntindex],
               ),
-
             ),
             drawer: Drawer(
               child: Column(
@@ -52,9 +54,11 @@ class home extends StatelessWidget {
                               CircleAvatar(
                                 radius: 50,
                                 backgroundColor: Colors.black,
-                                child: Image(image: AssetImage('images/Add tasks-amico.png'),),
+                                child: Image(
+                                  image:
+                                      AssetImage('images/Add tasks-amico.png'),
+                                ),
                               ),
-
                             ],
                             alignment: AlignmentDirectional.bottomEnd,
                           ),
@@ -62,14 +66,13 @@ class home extends StatelessWidget {
                       ),
                     ),
                   )
-
                 ],
               ),
             ),
             body: ConditionalBuilder(
-              condition:States is! GetDataBaseloadingState ,
-              builder:(context)=> cub.screens[cub.cruntindex],
-              fallback: (context)=> Center(child: CircularProgressIndicator()),
+              condition: States is! GetDataBaseloadingState,
+              builder: (context) => cub.screens[cub.cruntindex],
+              fallback: (context) => Center(child: CircularProgressIndicator()),
             ),
             floatingActionButton: Stack(
               children: [
@@ -82,94 +85,98 @@ class home extends StatelessWidget {
                     if (cub.fbflag) {
                       if (formkey.currentState!.validate()) {
                         cub.CreateEmp(
-                            name: namecontrol.text,
-                            salary: salarycontrol.text,
-                            phone: phonecontrol.text,
-                            ID: idcontrol.text,
-                            isatend: 0
+                          name: namecontrol.text,
+                          salary: salarycontrol.text,
+                          phone: phonecontrol.text,
+                          NID: nidcontrol.text,
                         );
                       }
                     } else {
-                       namecontrol.text = "";
-                       salarycontrol.text="";
-                       idcontrol.text='';
-                       phonecontrol.text='';
-                       scaffoldkey.currentState?.showBottomSheet(
-                             (context) => SingleChildScrollView(
-                          child: Container(
-                              width: double.infinity,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Form(
-                                  key: formkey,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(
-                                        height: 15,
+                      namecontrol.text = "";
+                      salarycontrol.text = "";
+                      nidcontrol.text = '';
+                      phonecontrol.text = '';
+                      scaffoldkey.currentState
+                          ?.showBottomSheet(
+                            (context) => SingleChildScrollView(
+                              child: Container(
+                                  width: double.infinity,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Form(
+                                      key: formkey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          dfulttextfilde(
+                                              type: TextInputType.name,
+                                              control: namecontrol,
+                                              icon: Icons.title,
+                                              lable: 'Name',
+                                              validatetor: (value) {
+                                                if (value.isEmpty)
+                                                  return 'Cann be Empty';
+                                              }),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          dfulttextfilde(
+                                              type: TextInputType.number,
+                                              control: phonecontrol,
+                                              icon: Icons.call,
+                                              lable: 'Phone',
+                                              validatetor: (value) {
+                                                if (value.isEmpty)
+                                                  return 'Cann be Empty';
+                                              }),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          dfulttextfilde(
+                                              type: TextInputType.number,
+                                              control: nidcontrol,
+                                              icon: Icons
+                                                  .card_membership_outlined,
+                                              lable: 'Nathonal ID',
+                                              validatetor: (value) {
+                                                if (value.isEmpty)
+                                                  return 'Cann be Empty';
+                                              }),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          dfulttextfilde(
+                                              type: TextInputType.number,
+                                              control: salarycontrol,
+                                              icon: Icons
+                                                  .monetization_on_outlined,
+                                              lable: 'Salary',
+                                              validatetor: (value) {
+                                                if (value.isEmpty)
+                                                  return 'Cann be Empty';
+                                              }),
+                                        ],
                                       ),
-                                      dfulttextfilde(
-                                          type: TextInputType.name,
-                                          control: namecontrol,
-                                          icon: Icons.title,
-                                          lable: 'Name',
-                                          validatetor: (value) {
-                                            if (value.isEmpty)
-                                              return 'Cann be Empty';
-                                          }),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      dfulttextfilde(
-                                          type: TextInputType.number,
-                                          control: phonecontrol,
-                                          icon: Icons.call,
-                                          lable: 'Phone',
-                                          validatetor: (value) {
-                                            if (value.isEmpty)
-                                              return 'Cann be Empty';
-                                          }),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      dfulttextfilde(
-                                          type: TextInputType.number,
-                                          control: idcontrol,
-                                          icon: Icons.card_membership_outlined,
-                                          lable: 'Nathonal ID',
-                                          validatetor: (value) {
-                                            if (value.isEmpty)
-                                              return 'Cann be Empty';
-                                          }),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      dfulttextfilde(
-                                          type: TextInputType.number,
-                                          control: salarycontrol,
-                                          icon: Icons.monetization_on_outlined,
-                                          lable: 'Salary by week',
-                                          validatetor: (value) {
-                                            if (value.isEmpty)
-                                              return 'Cann be Empty';
-                                          }),
-                                     ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                  color: Colors.black12,
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(0),
-                                      bottomLeft: Radius.circular(0),
-                                      topRight: Radius.circular(30),
-                                      topLeft: Radius.circular(30)))),
-                        ),
-                      ).closed.then((value) {
-
-                         cub.changeBottomSheetState(isshow: false, icon: Icons.edit);
+                                  decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(0),
+                                          bottomLeft: Radius.circular(0),
+                                          topRight: Radius.circular(30),
+                                          topLeft: Radius.circular(30)))),
+                            ),
+                          )
+                          .closed
+                          .then((value) {
+                        cub.changeBottomSheetState(
+                            isshow: false, icon: Icons.edit);
                       });
-                       cub.changeBottomSheetState(isshow: true, icon: Icons.add);
+                      cub.changeBottomSheetState(isshow: true, icon: Icons.add);
                     }
                   },
                   mini: true,
@@ -185,26 +192,19 @@ class home extends StatelessWidget {
               unselectedItemColor: Colors.black26,
               type: BottomNavigationBarType.fixed,
               currentIndex: cub.cruntindex,
-              onTap: (index){
+              onTap: (index) {
                 cub.changeindex(index);
               },
               items: [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.timelapse),
-                    label: 'Attendans'
-                ),
+                    icon: Icon(Icons.timelapse), label: 'Attendans'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.article),
-                    label: 'Article'
-                )
+                    icon: Icon(Icons.article), label: 'Article')
               ],
-
             ),
           );
-
         },
       ),
     );
   }
 }
-
