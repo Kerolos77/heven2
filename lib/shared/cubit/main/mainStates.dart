@@ -58,7 +58,13 @@ class SignUpErrorState extends States {
 
 class SignUpLoadingState extends States {}
 
-class LoginSucsessState extends States {}
+class LoginSucsessState extends States {
+  late String uId;
+
+  LoginSucsessState(String id) {
+    uId = id;
+  }
+}
 
 class LoginLoadingState extends States {}
 
@@ -82,74 +88,4 @@ class CreateUserErrorState extends States {
   }
 }
 
-class CreateEmpSucsessState extends States {}
-
-class CreateEmpLoadingState extends States {}
-
-class CreateEmpErrorState extends States {
-  var error;
-
-  CreateEmpErrorState(String Error) {
-    error = Error;
-  }
-}
-
-class GetEmpSucsessState extends States {}
-
-class GetEmpLoadingState extends States {}
-
-class GetEmpErrorState extends States {
-  var error;
-
-  GetEmpErrorState(String Error) {
-    error = Error;
-  }
-}
-
-class UpdateEmpSucsessState extends States {}
-
-class UpdateEmpLoadingState extends States {}
-
-class UpdateEmpErrorState extends States {
-  var error;
-
-  UpdateEmpErrorState(String Error) {
-    error = Error;
-  }
-}
-
-class CreateAtendSucsessState extends States {}
-
-class CreateAtendLoadingState extends States {}
-
-class CreateAtendErrorState extends States {
-  var error;
-
-  CreateAtendErrorState(String Error) {
-    error = Error;
-  }
-}
-
-class GetAtendSucsessState extends States {}
-
-class GetAtendLoadingState extends States {}
-
-class GetAtendErrorState extends States {
-  var error;
-
-  GetAtendErrorState(String Error) {
-    error = Error;
-  }
-}
-
-class UpdateAtendSucsessState extends States {}
-
-class UpdateAtendLoadingState extends States {}
-
-class UpdateAtendErrorState extends States {
-  var error;
-
-  UpdateAtendErrorState(String Error) {
-    error = Error;
-  }
-}
+class LogOutSucsessState extends States {}

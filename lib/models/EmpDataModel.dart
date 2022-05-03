@@ -2,22 +2,22 @@ class EmpDataModel {
   late String name;
   late String salary;
   late String phone;
-  late String ID;
-  late String NID;
-  late int isatend;
+  late String id;
+  late String nId;
+  late int isAttend;
   late String lastAttendance;
   late String startTime;
 
-  EmpDataModel(this.name, this.salary, this.phone, this.ID, this.NID,
-      this.isatend, this.lastAttendance, this.startTime);
+  EmpDataModel(this.name, this.salary, this.phone, this.id, this.nId,
+      this.isAttend, this.lastAttendance, this.startTime);
 
   EmpDataModel.fromJson(Map<String, dynamic>? json) {
     name = json!['name'];
     salary = json['salary'];
     phone = json['phone'];
-    ID = json['id'];
-    NID = json['nid'];
-    isatend = json['isatend'];
+    id = json['id'];
+    nId = json['nid'];
+    isAttend = json['isAttend'];
     lastAttendance = json['lastAttendance'];
     startTime = json['startTime'];
   }
@@ -27,9 +27,9 @@ class EmpDataModel {
       'name': name,
       'salary': salary,
       'phone': phone,
-      'id': ID,
-      'nid': NID,
-      'isatend': isatend,
+      'id': id,
+      'nid': nId,
+      'isAttend': isAttend,
       'lastAttendance': lastAttendance,
       'startTime': startTime,
     };

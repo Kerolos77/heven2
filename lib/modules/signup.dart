@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../login_screen.dart';
 import '../shared/componants/componants.dart';
-import '../shared/cubit/cubit.dart';
-import '../shared/cubit/heven_states.dart';
+import '../shared/cubit/main/mainCubit.dart';
+import '../shared/cubit/main/mainStates.dart';
 import 'login.dart';
 
 class signup extends StatefulWidget {
@@ -23,11 +22,12 @@ class _signupState extends State<signup> {
   TextEditingController confirmpasswordcontrol = new TextEditingController();
   TextEditingController phonecontrol = new TextEditingController();
   TextEditingController namecontrol = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => cubit(),
-        child: BlocConsumer<cubit, States>(
+        create: (BuildContext context) => MainCubit(),
+        child: BlocConsumer<MainCubit, States>(
           listener: (context, state) {
             if (state is SignUpErrorState) {
               Fluttertoast.showToast(
@@ -46,7 +46,7 @@ class _signupState extends State<signup> {
             }
           },
           builder: (context, state) {
-            var cub = cubit.get(context);
+            var cub = MainCubit.get(context);
             return Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
@@ -62,48 +62,48 @@ class _signupState extends State<signup> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          dfultlogintextfilde(
+                          defaultLoginTextField(
                             type: TextInputType.emailAddress,
                             control: emailcontrol,
                             icon: Icons.perm_identity,
-                            lable: 'Email',
-                            validatetor: (value) {
+                            label: 'Email',
+                            validate: (value) {
                               if (value.isEmpty) return 'Email is empty';
                             },
                             onchange: (value) {
                               if (value.contains('@') && value.contains('.com'))
-                                cub.changeemailflag(true);
+                                cub.changeEmailFlag(true);
                               else
-                                cub.changeemailflag(false);
+                                cub.changeEmailFlag(false);
                             },
                           ),
                           SizedBox(
                             height: 10,
                           ),
-                          dfultlogintextfilde(
+                          defaultLoginTextField(
                             type: TextInputType.number,
                             control: adminkeycontrol,
                             icon: Icons.admin_panel_settings_outlined,
-                            lable: 'Admin Key',
-                            validatetor: (value) {
+                            label: 'Admin Key',
+                            validate: (value) {
                               if (value.isEmpty) return 'Admin key is empty';
                             },
                             onchange: (value) {
                               if (!value.contains('11'))
-                                cub.changeadminflag(true);
+                                cub.changeAdminFlag(true);
                               else
-                                cub.changeadminflag(false);
+                                cub.changeAdminFlag(false);
                             },
                           ),
                           SizedBox(
                             height: 10,
                           ),
-                          dfultlogintextfilde(
+                          defaultLoginTextField(
                             type: TextInputType.emailAddress,
                             control: namecontrol,
                             icon: Icons.title_outlined,
-                            lable: 'User Name',
-                            validatetor: (value) {
+                            label: 'User Name',
+                            validate: (value) {
                               if (value.isEmpty) return 'Name is empty';
                             },
                             onchange: (value) {},
@@ -111,37 +111,37 @@ class _signupState extends State<signup> {
                           SizedBox(
                             height: 10,
                           ),
-                          dfultlogintextfilde(
+                          defaultLoginTextField(
                             type: TextInputType.number,
                             control: phonecontrol,
                             icon: Icons.phone,
-                            lable: 'Phone',
-                            validatetor: (value) {
+                            label: 'Phone',
+                            validate: (value) {
                               if (value.isEmpty) return 'Phone is empty';
                             },
                             onchange: (value) {
                               if (!value.contains('11'))
-                                cub.changephoneflag(true);
+                                cub.changePhoneFlag(true);
                               else
-                                cub.changephoneflag(false);
+                                cub.changePhoneFlag(false);
                             },
                           ),
                           SizedBox(
                             height: 10,
                           ),
-                          sufixlogintextfilde(
+                          sufixLoginTextFiled(
                               type: TextInputType.visiblePassword,
-                              obscure: cub.passflag,
-                              sufixicon: cub.passflag
+                              obscure: cub.passFlag,
+                              sufixIcon: cub.passFlag
                                   ? Icons.remove_red_eye_outlined
                                   : Icons.visibility_off_outlined,
                               control: passwordcontrol,
-                              prifixicon: Icons.lock_outline,
-                              lable: 'Password',
-                              onpresssufix: () {
-                                cub.changepassflag(!cub.passflag);
+                              prifixIcon: Icons.lock_outline,
+                              label: 'Password',
+                              onPressSufix: () {
+                                cub.changePassFlag(!cub.passFlag);
                               },
-                              validatetor: (value) {
+                              validator: (value) {
                                 if (value.isEmpty) return 'passowrd is empty';
                               },
                               onchange: (value) {
@@ -150,91 +150,91 @@ class _signupState extends State<signup> {
                                 RegExp regExdigit =
                                     new RegExp(r"(?=.*[0-9])\w+");
                                 if (regExdigit.hasMatch(value))
-                                  cub.changepassdigitalflag(true);
+                                  cub.changePassDigitalFlag(true);
                                 else
-                                  cub.changepassdigitalflag(false);
+                                  cub.changePassDigitalFlag(false);
                                 if (value.length >= 8)
-                                  cub.changepassnumcharflag(true);
+                                  cub.changePassNumCharFlag(true);
                                 else
-                                  cub.changepassnumcharflag(false);
+                                  cub.changePassNumCharFlag(false);
                                 if (regExcap.hasMatch(value))
-                                  cub.changepasscapflag(true);
+                                  cub.changePassCapFlag(true);
                                 else
-                                  cub.changepasscapflag(false);
+                                  cub.changePassCapFlag(false);
                               }),
                           SizedBox(
                             height: 10,
                           ),
-                          sufixlogintextfilde(
+                          sufixLoginTextFiled(
                               type: TextInputType.visiblePassword,
-                              obscure: cub.passflag,
-                              sufixicon: cub.passflag
+                              obscure: cub.passFlag,
+                              sufixIcon: cub.passFlag
                                   ? Icons.remove_red_eye_outlined
                                   : Icons.visibility_off_outlined,
                               control: confirmpasswordcontrol,
-                              prifixicon: Icons.confirmation_num_outlined,
-                              lable: 'Confirm Password',
-                              onpresssufix: () {
-                                cub.changepassflag(!cub.passflag);
+                              prifixIcon: Icons.confirmation_num_outlined,
+                              label: 'Confirm Password',
+                              onPressSufix: () {
+                                cub.changePassFlag(!cub.passFlag);
                               },
-                              validatetor: (value) {
+                              validator: (value) {
                                 if (value.isEmpty)
                                   return 'Confirm passowrd is empty';
                               },
                               onchange: (value) {
                                 if (value == passwordcontrol.text)
-                                  cub.changepassconeirmflag(true);
+                                  cub.changePassConfirmFlag(true);
                                 else
-                                  cub.changepassconeirmflag(false);
+                                  cub.changePassConfirmFlag(false);
                               }),
                           SizedBox(
                             height: 5,
                           ),
-                          valedaterow(
-                              flag: cub.passnumchar,
-                              falsetext: " atlast 8 characters",
-                              truetext: " Done"),
+                          valedateRow(
+                              flag: cub.passNumChar,
+                              falseText: " atlast 8 characters",
+                              trueText: " Done"),
                           SizedBox(
                             height: 5,
                           ),
-                          valedaterow(
-                              flag: cub.passdigitalflag,
-                              falsetext: " contane digits",
-                              truetext: " Done"),
+                          valedateRow(
+                              flag: cub.passDigitalFlag,
+                              falseText: " contane digits",
+                              trueText: " Done"),
                           SizedBox(
                             height: 5,
                           ),
-                          valedaterow(
-                              flag: cub.passcapflag,
-                              falsetext: " contane upper & lowercase letters",
-                              truetext: " Done"),
+                          valedateRow(
+                              flag: cub.passCapFlag,
+                              falseText: " contane upper & lowercase letters",
+                              trueText: " Done"),
                           SizedBox(
                             height: 5,
                           ),
-                          valedaterow(
-                              flag: cub.passconfirmflag,
-                              falsetext: " not match aconfirm",
-                              truetext: " Done"),
+                          valedateRow(
+                              flag: cub.passConfirmFlag,
+                              falseText: " not match aconfirm",
+                              trueText: " Done"),
                           SizedBox(
                             height: 5,
                           ),
                           ConditionalBuilder(
                             condition: state is! LoginSucsessState,
-                            builder: (context) => defultBotton(
-                                isdone: cub.emailflag &&
-                                    cub.adminflag &&
-                                    cub.passcapflag &&
-                                    cub.passnumchar &&
-                                    cub.passdigitalflag &&
-                                    cub.passconfirmflag &&
-                                    cub.phoneflag,
+                            builder: (context) => defaultButton(
+                                isDone: cub.emailFlag &&
+                                    cub.adminFlag &&
+                                    cub.passCapFlag &&
+                                    cub.passNumChar &&
+                                    cub.passDigitalFlag &&
+                                    cub.passConfirmFlag &&
+                                    cub.phoneFlag,
                                 text: 'Sign Up',
-                                onpress: () {
+                                onPress: () {
                                   if (formkey.currentState!.validate()) {
                                     cub.signUp(
                                         name: namecontrol.text,
                                         email: emailcontrol.text,
-                                        adminkey: adminkeycontrol.text,
+                                        adminKey: adminkeycontrol.text,
                                         phone: phonecontrol.text,
                                         password: passwordcontrol.text);
                                   }

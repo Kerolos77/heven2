@@ -1,31 +1,31 @@
-class AtendDataModel {
+class AttendDataModel {
   late String date;
-  late String starttime;
-  late String endtime;
-  late String empid;
+  late String startTime;
+  late String endTime;
+  late String empId;
   late String id;
   late String timeInDay;
 
-  AtendDataModel(this.date, this.starttime, this.endtime, this.empid, this.id,
+  AttendDataModel(this.date, this.startTime, this.endTime, this.empId, this.id,
       this.timeInDay);
 
-  AtendDataModel.fromJson(Map<String, dynamic> json) {
+  AttendDataModel.fromJson(Map<String, dynamic> json) {
     date = json['date'];
-    starttime = json['starttime'];
-    endtime = json['endtime'];
-    empid = json['empid'];
+    startTime = json['startTime'];
+    endTime = json['endTime'];
+    empId = json['empId'];
     id = json['id'];
     timeInDay = json['timeInDay'];
   }
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['date'] = this.date;
-    data['starttime'] = this.starttime;
-    data['endtime'] = this.endtime;
-    data['empid'] = this.empid;
-    data['id'] = this.id;
-    data['timeInDay'] = this.timeInDay;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['date'] = date;
+    data['startTime'] = startTime;
+    data['endTime'] = endTime;
+    data['empId'] = empId;
+    data['id'] = id;
+    data['timeInDay'] = timeInDay;
     return data;
   }
 }

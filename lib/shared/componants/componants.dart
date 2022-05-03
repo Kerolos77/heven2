@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:heven2/modules/atendEmpScreen.dart';
-import 'package:heven2/shared/cubit/cubit.dart';
 import 'package:intl/intl.dart';
+import 'package:status_alert/status_alert.dart';
 
-Widget dfulttextfilde({
+import '../ID/CreateId.dart';
+import '../cubit/attend/attendCubit.dart';
+import '../cubit/emp/empCubit.dart';
+
+Widget defaultTextField({
   required TextEditingController control,
   required TextInputType type,
-  required String lable,
+  required String label,
   required IconData icon,
-  bool enablekey = false,
-  ValueChanged? onsubmit,
+  bool enableKey = false,
+  ValueChanged? onSubmit,
   ValueChanged? onchange,
-  GestureTapCallback? ontape,
-  FormFieldValidator? validatetor,
+  GestureTapCallback? onTape,
+  FormFieldValidator? validate,
 }) =>
     TextFormField(
       controller: control,
       keyboardType: type,
       onChanged: onchange,
-      onTap: ontape,
-      validator: validatetor,
-      onFieldSubmitted: onsubmit,
-      readOnly: enablekey,
+      onTap: onTape,
+      validator: validate,
+      onFieldSubmitted: onSubmit,
+      readOnly: enableKey,
       decoration: InputDecoration(
-        labelText: lable,
-        labelStyle: TextStyle(color: Colors.black),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black),
         filled: true,
         fillColor: Colors.grey.shade200,
         prefixIcon: /**/ Icon(
@@ -39,21 +43,23 @@ Widget dfulttextfilde({
       ),
     );
 
-Widget DailogText({
-  required String lable,
+Widget dialogText({
+  required String label,
   required String model,
 }) =>
     Text(
-      '${lable} : ${model}',
-      style: TextStyle(
+      '$label : $model',
+      style: const TextStyle(
         color: Colors.black,
         fontSize: 15,
         fontWeight: FontWeight.bold,
       ),
     );
 
-Widget itemnewemp(Map model, context, cubit cub) {
+Widget itemNewEmp(Map model, context) {
   late String id;
+  AttendCubit attendCub = AttendCubit();
+  EmpCubit empCub = EmpCubit.get(context);
   return Padding(
     padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
     child: GestureDetector(
@@ -66,29 +72,29 @@ Widget itemnewemp(Map model, context, cubit cub) {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DailogText(
-                      lable: 'Name',
+                    dialogText(
+                      label: 'Name',
                       model: model['name'],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    DailogText(
-                      lable: 'Phone',
+                    dialogText(
+                      label: 'Phone',
                       model: model['phone'],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    DailogText(
-                      lable: 'NID',
+                    dialogText(
+                      label: 'NID',
                       model: model['nid'],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    DailogText(
-                      lable: 'Salary',
+                    dialogText(
+                      label: 'Salary',
                       model: model['salary'],
                     ),
                   ],
@@ -110,7 +116,7 @@ Widget itemnewemp(Map model, context, cubit cub) {
                     children: [
                       Text(
                         '${model['name']}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -129,40 +135,43 @@ Widget itemnewemp(Map model, context, cubit cub) {
                 ),
                 IconButton(
                   onPressed: () {
-                    if (model['isatend'] == 0) {
-                      id = cub.CreateId();
-                      print("press");
-                      cub.CreateAtend(
-                        date:
-                            "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                        empid: model['id'],
-                        endtime: "00:00AM",
-                        starttime:
-                            "${DateFormat('hh:mma').format(DateTime.now())}",
+                    if (model['isAttend'] == 0) {
+                      id = CreateId.createId();
+                      attendCub.createAttend(
+                        date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                        empId: model['id'],
+                        endTime: "00:00AM",
+                        startTime: DateFormat('hh:mma').format(DateTime.now()),
                         id: id,
                       );
-                      cub.UpdateEmp(
-                        isatend: 1,
-                        ID: model['id'],
-                        NID: model['nid'],
+                      empCub.updateEmp(
+                        isAttend: 1,
+                        id: model['id'],
+                        nId: model['nid'],
                         phone: model['phone'],
                         name: model['name'],
                         salary: model['salary'],
-                        lastAttendance: '$id',
-                        startTime:
-                            "${DateFormat('hh:mma').format(DateTime.now())}",
+                        lastAttendance: id,
+                        startTime: DateFormat('hh:mma').format(DateTime.now()),
                       );
-
-                      print("isatend = ${model['isatend']}");
-                      toast(
-                          msg: 'Acceptance',
-                          backcolor: Colors.green,
-                          textcolor: Colors.black);
-                    } else
-                      toast(
-                          msg: 'Reject',
-                          backcolor: Colors.red,
-                          textcolor: Colors.black);
+                      statusCard(
+                        context: context,
+                        title: " تم بداية العمل ",
+                        subtitle: DateFormat('hh:mma').format(DateTime.now()),
+                        configurationIcon: const IconConfiguration(
+                            icon: Icons.check, color: Colors.green, size: 50),
+                      );
+                    } else {
+                      statusCard(
+                        context: context,
+                        title: " الموظف بدأ العمل بالفعل ",
+                        subtitle: model["startTime"],
+                        configurationIcon: const IconConfiguration(
+                            icon: Icons.error_outline_outlined,
+                            color: Colors.red,
+                            size: 50),
+                      );
+                    }
                   },
                   icon: Icon(
                     Icons.access_time,
@@ -171,33 +180,41 @@ Widget itemnewemp(Map model, context, cubit cub) {
                 ),
                 IconButton(
                   onPressed: () {
-                    if (model['isatend'] == 1) {
-                      cub.UpdateAtend(
-                        starttime: model["startTime"],
-                        endtime:
-                            '${DateFormat('hh:mma').format(DateTime.now())}',
+                    if (model['isAttend'] == 1) {
+                      attendCub.updateAttend(
+                        startTime: model["startTime"],
+                        endTime: DateFormat('hh:mma').format(DateTime.now()),
                         id: model['lastAttendance'],
-                        empid: model['id'],
+                        empId: model['id'],
                       );
-                      cub.UpdateEmp(
-                        isatend: 0,
-                        ID: model['id'],
-                        NID: model['nid'],
+                      empCub.updateEmp(
+                        isAttend: 0,
+                        id: model['id'],
+                        nId: model['nid'],
                         phone: model['phone'],
                         name: model['name'],
                         salary: model['salary'],
                         lastAttendance: model['lastAttendance'],
                         startTime: model["startTime"],
                       );
-                      toast(
-                          msg: 'Acceptance',
-                          backcolor: Colors.green,
-                          textcolor: Colors.black);
-                    } else
-                      toast(
-                          msg: 'Reject',
-                          backcolor: Colors.red,
-                          textcolor: Colors.black);
+                      statusCard(
+                        context: context,
+                        title: " تم انهاء العمل ",
+                        subtitle: DateFormat('hh:mma').format(DateTime.now()),
+                        configurationIcon: const IconConfiguration(
+                            icon: Icons.check, color: Colors.green, size: 50),
+                      );
+                    } else {
+                      statusCard(
+                        context: context,
+                        title: " الموظف انتهي من العمل بالفعل ",
+                        subtitle: "",
+                        configurationIcon: const IconConfiguration(
+                            icon: Icons.error_outline_outlined,
+                            color: Colors.red,
+                            size: 50),
+                      );
+                    }
                   },
                   icon: Icon(
                     Icons.access_time,
@@ -207,21 +224,20 @@ Widget itemnewemp(Map model, context, cubit cub) {
                 ),
                 IconButton(
                   onPressed: () {
-                    cub.GetAtend(
-                        date:
-                            "${DateFormat('yyyy-MM-dd').format(DateTime.now())}",
-                        empid: model['id']);
+                    // attendCub.getAttend(
+                    //     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                    //     empId: model['id']);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AtendScreen(
+                          builder: (context) => AttendScreen(
                                 name: model['name'],
-// id: model['id'],
-                                cub: cub,
+                                id: model['id'],
+                                // cub: cub,
                               )),
                     );
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.slideshow,
                     color: Colors.black,
                   ),
@@ -235,10 +251,10 @@ Widget itemnewemp(Map model, context, cubit cub) {
             border: Border(
               bottom: BorderSide(
                   width: 3.0,
-                  color: model['isatend'] == 1
+                  color: model['isAttend'] == 1
                       ? Colors.green.shade300
                       : Colors.red.shade200),
-// color: model['isatend'] == 1 ? Colors.green : Colors.red,
+// color: model['isAttend'] == 1 ? Colors.green : Colors.red,
 // width: 2
             ),
           ),
@@ -248,83 +264,79 @@ Widget itemnewemp(Map model, context, cubit cub) {
   );
 }
 
-Widget itematend(Map model, context, cubit cub) => Padding(
+Widget itemAttend(Map model) => Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${model['date']}',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                '${model['date']}',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
                 ),
-                Expanded(
-                  child: Text(
-                    '${model['starttime']}',
-                    style: TextStyle(
-                      color: Colors.green.shade300,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    '${model['endtime']}',
-                    style: TextStyle(
-                      color: Colors.red.shade200,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  '${cub.subTime(model['starttime'], model['endtime'])}',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Text(
+                '${model['startTime']}',
+                style: TextStyle(
+                  color: Colors.green.shade300,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                '${model['endTime']}',
+                style: TextStyle(
+                  color: Colors.red.shade200,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              model['timeInDay'],
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
-Widget dfultlogintextfilde({
+Widget defaultLoginTextField({
   required TextEditingController control,
   required TextInputType type,
-  required String lable,
+  required String label,
   required IconData icon,
-  bool enablekey = false,
-  ValueChanged? onsubmit,
+  bool enableKey = false,
+  ValueChanged? onSubmit,
   ValueChanged? onchange,
-  GestureTapCallback? ontape,
-  FormFieldValidator? validatetor,
+  GestureTapCallback? onTape,
+  FormFieldValidator? validate,
 }) =>
     TextFormField(
       controller: control,
       keyboardType: type,
       onChanged: onchange,
-      onTap: ontape,
-      validator: validatetor,
-      onFieldSubmitted: onsubmit,
+      onTap: onTape,
+      validator: validate,
+      onFieldSubmitted: onSubmit,
       cursorColor: Colors.black,
-      readOnly: enablekey,
+      readOnly: enableKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
-          labelText: lable,
-          labelStyle: TextStyle(color: Colors.black),
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.black),
           filled: true,
           fillColor: Colors.white,
           prefixIcon: /**/ Icon(
@@ -332,15 +344,15 @@ Widget dfultlogintextfilde({
             size: 25,
             color: Colors.black,
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
               //Outline border type for TextFeild
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(
                 color: Colors.black,
                 width: 2,
               )),
-          focusedBorder: OutlineInputBorder(
-              //Outline border type for TextFeild
+          focusedBorder: const OutlineInputBorder(
+              //Outline border type for TextFiled
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(
                 color: Colors.black,
@@ -348,57 +360,57 @@ Widget dfultlogintextfilde({
               ))),
     );
 
-Widget sufixlogintextfilde({
+Widget sufixLoginTextFiled({
   required TextEditingController control,
   required TextInputType type,
-  required String lable,
-  required IconData prifixicon,
-  required IconData sufixicon,
+  required String label,
+  required IconData prifixIcon,
+  required IconData sufixIcon,
   required bool obscure,
-  VoidCallback? onpresssufix,
-  bool enablekey = false,
-  ValueChanged? onsubmit,
+  VoidCallback? onPressSufix,
+  bool enableKey = false,
+  ValueChanged? onSubmit,
   ValueChanged? onchange,
-  GestureTapCallback? ontape,
-  FormFieldValidator? validatetor,
+  GestureTapCallback? onTape,
+  FormFieldValidator? validator,
 }) =>
     TextFormField(
       controller: control,
       keyboardType: type,
       onChanged: onchange,
-      onTap: ontape,
-      validator: validatetor,
-      onFieldSubmitted: onsubmit,
-      readOnly: enablekey,
+      onTap: onTape,
+      validator: validator,
+      onFieldSubmitted: onSubmit,
+      readOnly: enableKey,
       obscureText: obscure,
       cursorColor: Colors.black,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
-          labelText: lable,
-          labelStyle: TextStyle(color: Colors.black),
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.black),
           filled: true,
           fillColor: Colors.white,
           prefixIcon: /**/ Icon(
-            prifixicon,
+            prifixIcon,
             size: 25,
             color: Colors.black,
           ),
           suffixIcon: IconButton(
             icon: Icon(
-              sufixicon,
+              sufixIcon,
               size: 25,
               color: Colors.black,
             ),
-            onPressed: onpresssufix,
+            onPressed: onPressSufix,
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
               //Outline border type for TextFeild
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(
                 color: Colors.black,
                 width: 2,
               )),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
               //Outline border type for TextFeild
               borderRadius: BorderRadius.all(Radius.circular(20)),
               borderSide: BorderSide(
@@ -407,17 +419,17 @@ Widget sufixlogintextfilde({
               ))),
     );
 
-Widget defultBotton(
-        {required String text, required bool isdone, VoidCallback? onpress}) =>
+Widget defaultButton(
+        {required String text, required bool isDone, VoidCallback? onPress}) =>
     Container(
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.only(top: 1, bottom: 1, left: 20, right: 20),
         child: MaterialButton(
-          onPressed: onpress,
+          onPressed: onPress,
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
               color: Colors.white,
             ),
@@ -425,38 +437,38 @@ Widget defultBotton(
         ),
       ),
       decoration: BoxDecoration(
-        color: isdone ? Colors.black : Colors.black26,
+        color: isDone ? Colors.black : Colors.black26,
         borderRadius: BorderRadius.circular(20),
       ),
     );
 
-Widget valedaterow({
+Widget valedateRow({
   required bool flag,
-  required String truetext,
-  required String falsetext,
+  required String trueText,
+  required String falseText,
 }) =>
     Row(
       children: [
         flag
-            ? Icon(
+            ? const Icon(
                 Icons.check_circle_outline,
                 color: Colors.green,
               )
-            : Icon(
+            : const Icon(
                 Icons.error_outline_outlined,
                 color: Colors.red,
               ),
         Text(
-          flag ? truetext : falsetext,
+          flag ? trueText : falseText,
           style: TextStyle(color: flag ? Colors.black : Colors.red),
         ),
       ],
     );
 
-Widget itemmenu({
-  required String titel,
+Widget itemMenu({
+  required String title,
   required IconData icon,
-  required Color iconcolor,
+  required Color iconColor,
 }) =>
     Padding(
       padding: const EdgeInsetsDirectional.only(
@@ -470,22 +482,22 @@ Widget itemmenu({
             children: [
               Icon(
                 icon,
-                color: iconcolor,
+                color: iconColor,
                 size: 30,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Text(
-                titel,
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 20,
                 ),
               )
             ],
           ),
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.black12,
             borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(20),
@@ -497,14 +509,140 @@ Widget itemmenu({
 
 Future<bool?> toast({
   required String msg,
-  required Color backcolor,
-  required Color textcolor,
+  required Color backColor,
+  required Color textColor,
 }) =>
     Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: backcolor,
-      textColor: textcolor,
+      backgroundColor: backColor,
+      textColor: textColor,
     );
+
+Widget bottomSheet({
+  required GlobalKey key,
+  required TextEditingController nameControl,
+  required TextEditingController phoneControl,
+  required TextEditingController nidControl,
+  required TextEditingController salaryControl,
+}) {
+  return SingleChildScrollView(
+    child: Container(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+            key: key,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                defaultTextField(
+                    type: TextInputType.name,
+                    control: nameControl,
+                    icon: Icons.title,
+                    label: 'Name',
+                    validate: (value) {
+                      if (value.isEmpty) {
+                        return 'Cann be Empty';
+                      }
+                      return null;
+                    }),
+                const SizedBox(
+                  height: 10,
+                ),
+                defaultTextField(
+                    type: TextInputType.number,
+                    control: phoneControl,
+                    icon: Icons.call,
+                    label: 'Phone',
+                    validate: (value) {
+                      if (value.isEmpty) {
+                        return 'Cann be Empty';
+                      }
+                      return null;
+                    }),
+                const SizedBox(
+                  height: 10,
+                ),
+                defaultTextField(
+                    type: TextInputType.number,
+                    control: nidControl,
+                    icon: Icons.card_membership_outlined,
+                    label: 'Nathonal ID',
+                    validate: (value) {
+                      if (value.isEmpty) {
+                        return 'Cann be Empty';
+                      }
+                      return null;
+                    }),
+                const SizedBox(
+                  height: 10,
+                ),
+                defaultTextField(
+                    type: TextInputType.number,
+                    control: salaryControl,
+                    icon: Icons.monetization_on_outlined,
+                    label: 'Salary',
+                    validate: (value) {
+                      if (value.isEmpty) {
+                        return 'Cann be Empty';
+                      }
+                      return null;
+                    }),
+              ],
+            ),
+          ),
+        ),
+        decoration: const BoxDecoration(
+            color: Colors.black12,
+            borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(0),
+                bottomLeft: Radius.circular(0),
+                topRight: Radius.circular(30),
+                topLeft: Radius.circular(30)))),
+  );
+}
+
+Widget defaultIconCard({
+  required IconData icon,
+  required VoidCallback? onTap,
+}) {
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: IconButton(
+        icon: Icon(
+          icon,
+          size: 20,
+        ),
+        onPressed: onTap,
+      ),
+    ),
+  );
+}
+
+void statusCard({
+  required BuildContext context,
+  required String title,
+  required String subtitle,
+  required IconConfiguration configurationIcon,
+}) {
+  return StatusAlert.show(
+    context,
+    duration: const Duration(seconds: 3),
+    title: title,
+    subtitle: subtitle,
+    configuration: configurationIcon,
+    backgroundColor: Colors.grey.shade300,
+  );
+}
