@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:heven2/modules/atendEmpScreen.dart';
 import 'package:intl/intl.dart';
@@ -61,52 +66,58 @@ Widget itemNewEmp(Map model, context) {
   AttendCubit attendCub = AttendCubit();
   EmpCubit empCub = EmpCubit.get(context);
   return Padding(
-    padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+    padding: const EdgeInsets.only(top: 1, bottom: 1, left: 2, right: 2),
     child: GestureDetector(
       onTap: () {
         showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    dialogText(
-                      label: 'Name',
-                      model: model['name'],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    dialogText(
-                      label: 'Phone',
-                      model: model['phone'],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    dialogText(
-                      label: 'NID',
-                      model: model['nid'],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    dialogText(
-                      label: 'Salary',
-                      model: model['salary'],
-                    ),
-                  ],
+                content: Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      dialogText(
+                        label: 'Name',
+                        model: model['name'],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      dialogText(
+                        label: 'Phone',
+                        model: model['phone'],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      dialogText(
+                        label: 'NID',
+                        model: model['nid'],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      dialogText(
+                        label: 'Salary',
+                        model: model['salary'],
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  elevation: 0,
                 ),
               );
             });
       },
-      child: Material(
-        elevation: 15,
+      child: Card(
+        elevation: 2,
+        clipBehavior: Clip.hardEdge,
+        color: Colors.white,
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               children: [
                 Expanded(
@@ -233,6 +244,7 @@ Widget itemNewEmp(Map model, context) {
                           builder: (context) => AttendScreen(
                                 name: model['name'],
                                 id: model['id'],
+                                Salary: int.parse(model['salary']),
                                 // cub: cub,
                               )),
                     );
@@ -246,7 +258,6 @@ Widget itemNewEmp(Map model, context) {
             ),
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
 // borderRadius: BorderRadius.circular(10),
             border: Border(
               bottom: BorderSide(
@@ -313,110 +324,111 @@ Widget itemAttend(Map model) => Padding(
       ),
     );
 
-Widget defaultLoginTextField({
+Widget mainTextField({
   required TextEditingController control,
   required TextInputType type,
-  required String label,
+  required String hint,
   required IconData icon,
-  bool enableKey = false,
+  bool readOnly = false,
   ValueChanged? onSubmit,
   ValueChanged? onchange,
   GestureTapCallback? onTape,
   FormFieldValidator? validate,
+  Color iconColor = Colors.black,
 }) =>
-    TextFormField(
-      controller: control,
-      keyboardType: type,
-      onChanged: onchange,
-      onTap: onTape,
-      validator: validate,
-      onFieldSubmitted: onSubmit,
-      cursorColor: Colors.black,
-      readOnly: enableKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.black),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: /**/ Icon(
-            icon,
-            size: 25,
-            color: Colors.black,
+    Card(
+      child: TextFormField(
+        controller: control,
+        keyboardType: type,
+        onChanged: onchange,
+        onTap: onTape,
+        validator: validate,
+        onFieldSubmitted: onSubmit,
+        cursorColor: Colors.black,
+        readOnly: readOnly,
+        textDirection: ui.TextDirection.rtl,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          errorStyle: TextStyle(
+            fontSize: 10,
+            color: Colors.grey,
           ),
-          enabledBorder: const OutlineInputBorder(
-              //Outline border type for TextFeild
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: Colors.black,
-                width: 2,
-              )),
-          focusedBorder: const OutlineInputBorder(
-              //Outline border type for TextFiled
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: Colors.black,
-                width: 2,
-              ))),
+          hintText: hint,
+          hintTextDirection: ui.TextDirection.rtl,
+          hintStyle: const TextStyle(
+            color: Colors.black26,
+            fontSize: 15,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+          ),
+          suffixIcon: /**/ Icon(
+            icon,
+            color: iconColor,
+          ),
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      clipBehavior: Clip.hardEdge,
+      elevation: 10,
+      color: Colors.blue.shade50,
     );
 
-Widget sufixLoginTextFiled({
-  required TextEditingController control,
-  required TextInputType type,
-  required String label,
-  required IconData prifixIcon,
-  required IconData sufixIcon,
-  required bool obscure,
-  VoidCallback? onPressSufix,
-  bool enableKey = false,
-  ValueChanged? onSubmit,
-  ValueChanged? onchange,
-  GestureTapCallback? onTape,
-  FormFieldValidator? validator,
-}) =>
-    TextFormField(
-      controller: control,
-      keyboardType: type,
-      onChanged: onchange,
-      onTap: onTape,
-      validator: validator,
-      onFieldSubmitted: onSubmit,
-      readOnly: enableKey,
-      obscureText: obscure,
-      cursorColor: Colors.black,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.black),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: /**/ Icon(
-            prifixIcon,
-            size: 25,
-            color: Colors.black,
+Widget sufixTextFiled(
+        {required TextEditingController control,
+        required TextInputType type,
+        required String hint,
+        required IconData prifixIcon,
+        required IconData sufixIcon,
+        required bool obscure,
+        VoidCallback? onPressPrifix,
+        bool enableKey = false,
+        ValueChanged? onSubmit,
+        ValueChanged? onchange,
+        GestureTapCallback? onTape,
+        FormFieldValidator? validator,
+        Color iconColor = Colors.black}) =>
+    Card(
+      child: TextFormField(
+        controller: control,
+        keyboardType: type,
+        onChanged: onchange,
+        onTap: onTape,
+        validator: validator,
+        onFieldSubmitted: onSubmit,
+        readOnly: enableKey,
+        obscureText: obscure,
+        cursorColor: Colors.black,
+        textDirection: ui.TextDirection.rtl,
+        decoration: InputDecoration(
+          hintText: hint,
+          hintTextDirection: ui.TextDirection.rtl,
+          hintStyle: const TextStyle(
+            color: Colors.black26,
+            fontSize: 15,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
           ),
-          suffixIcon: IconButton(
+          prefixIcon: IconButton(
             icon: Icon(
-              sufixIcon,
-              size: 25,
-              color: Colors.black,
+              prifixIcon,
+              color: iconColor,
             ),
-            onPressed: onPressSufix,
+            onPressed: onPressPrifix,
           ),
-          enabledBorder: const OutlineInputBorder(
-              //Outline border type for TextFeild
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: Colors.black,
-                width: 2,
-              )),
-          focusedBorder: const OutlineInputBorder(
-              //Outline border type for TextFeild
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              borderSide: BorderSide(
-                color: Colors.black,
-                width: 2,
-              ))),
+          suffixIcon: Icon(
+            sufixIcon,
+            color: iconColor,
+          ),
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      clipBehavior: Clip.hardEdge,
+      elevation: 10,
+      color: Colors.blue.shade50,
     );
 
 Widget defaultButton(
@@ -426,43 +438,17 @@ Widget defaultButton(
       child: Padding(
         padding: const EdgeInsets.only(top: 1, bottom: 1, left: 20, right: 20),
         child: MaterialButton(
-          onPressed: onPress,
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 20.0,
+            onPressed: isDone ? onPress : () {},
+            child: arabicText(
+              text: text,
               color: Colors.white,
-            ),
-          ),
-        ),
+              size: 20,
+            )),
       ),
       decoration: BoxDecoration(
         color: isDone ? Colors.black : Colors.black26,
         borderRadius: BorderRadius.circular(20),
       ),
-    );
-
-Widget valedateRow({
-  required bool flag,
-  required String trueText,
-  required String falseText,
-}) =>
-    Row(
-      children: [
-        flag
-            ? const Icon(
-                Icons.check_circle_outline,
-                color: Colors.green,
-              )
-            : const Icon(
-                Icons.error_outline_outlined,
-                color: Colors.red,
-              ),
-        Text(
-          flag ? trueText : falseText,
-          style: TextStyle(color: flag ? Colors.black : Colors.red),
-        ),
-      ],
     );
 
 Widget itemMenu({
@@ -541,56 +527,47 @@ Widget bottomSheet({
                 const SizedBox(
                   height: 15,
                 ),
-                defaultTextField(
+                mainTextField(
                     type: TextInputType.name,
                     control: nameControl,
-                    icon: Icons.title,
-                    label: 'Name',
+                    icon: CupertinoIcons.t_bubble,
+                    hint: 'اسم الموظف',
                     validate: (value) {
                       if (value.isEmpty) {
-                        return 'Cann be Empty';
+                        return 'ادخل اسم الموظف';
                       }
                       return null;
                     }),
-                const SizedBox(
-                  height: 10,
-                ),
-                defaultTextField(
+                mainTextField(
                     type: TextInputType.number,
                     control: phoneControl,
-                    icon: Icons.call,
-                    label: 'Phone',
+                    icon: CupertinoIcons.phone,
+                    hint: 'رقم الهاتف',
                     validate: (value) {
                       if (value.isEmpty) {
-                        return 'Cann be Empty';
+                        return 'ادخل رقم الهاتف';
                       }
                       return null;
                     }),
-                const SizedBox(
-                  height: 10,
-                ),
-                defaultTextField(
+                mainTextField(
                     type: TextInputType.number,
                     control: nidControl,
                     icon: Icons.card_membership_outlined,
-                    label: 'Nathonal ID',
+                    hint: 'الرقم القومي',
                     validate: (value) {
                       if (value.isEmpty) {
-                        return 'Cann be Empty';
+                        return 'ادخل الرقم القومي';
                       }
                       return null;
                     }),
-                const SizedBox(
-                  height: 10,
-                ),
-                defaultTextField(
+                mainTextField(
                     type: TextInputType.number,
                     control: salaryControl,
                     icon: Icons.monetization_on_outlined,
-                    label: 'Salary',
+                    hint: 'المرتب',
                     validate: (value) {
                       if (value.isEmpty) {
-                        return 'Cann be Empty';
+                        return 'ادخل المرتب';
                       }
                       return null;
                     }),
@@ -644,5 +621,85 @@ void statusCard({
     subtitle: subtitle,
     configuration: configurationIcon,
     backgroundColor: Colors.grey.shade300,
+  );
+}
+
+Widget textRegester({
+  required String text,
+}) {
+  return Column(
+    children: [
+      const SizedBox(
+        height: 5,
+      ),
+      Padding(
+        padding: const EdgeInsets.only(left: 15.0),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.grey.shade500,
+            fontSize: 12,
+          ),
+        ),
+      ),
+      const SizedBox(
+        height: 15,
+      )
+    ],
+  );
+}
+
+Widget noConnection() {
+  return Container(
+    color: Colors.blue.shade50,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Center(
+          child: Image(
+            image: AssetImage('images/No connection.png'),
+            fit: BoxFit.contain,
+            // height: 200,
+            // width: 200,
+          ),
+        ),
+        arabicText(text: 'Opps!', size: 20),
+        const SizedBox(height: 10),
+        arabicText(text: 'تاكد من الاتصال بالانترنت ', size: 16),
+      ],
+    ),
+  );
+}
+
+Widget noConnectionCard({
+  required Widget child,
+}) {
+  return OfflineBuilder(
+    connectivityBuilder: (
+      BuildContext context,
+      ConnectivityResult connectivity,
+      Widget child,
+    ) {
+      final bool connected = connectivity != ConnectivityResult.none;
+      return connected ? child : noConnection();
+    },
+    child: child,
+  );
+}
+
+Widget arabicText({
+  required String text,
+  double size = 15,
+  Color color = Colors.black,
+}) {
+  return Text(
+    text,
+    style: TextStyle(
+      fontSize: size,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Cairo',
+      color: color,
+    ),
   );
 }

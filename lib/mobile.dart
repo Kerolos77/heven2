@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,15 +21,27 @@ Future<void> saveAndLaunchFile(List<int> bytes, String fileName) async {
   final file = File('$path/$fileName');
   await file.writeAsBytes(bytes, flush: true);
   OpenFile.open('$path/$fileName');
-  // var storageRef = FirebaseStorage.instance.ref('Attendance Pdf/$fileName');
-  //
-  // try {
-  //   await storageRef.putFile(file);
-  //   print('File Uploaded');
-  // } catch (e) {
-  //   print("+++++++++++error : $e");
+}
+
+Future<File> getFile(String fileName) async {
+  final path = (await getExternalStorageDirectory())?.path;
+  final file = File('$path/$fileName');
+  return file;
+}
+
+Future<void> shareFile() async {
+  final path = (await getExternalStorageDirectory())?.path;
+  final file = File(
+      '$path/Attend Repo(${DateFormat('yyyy-MM-dd').format(DateTime.now())}) MnAlwPHS.pdf');
+  String? response;
+  final FlutterShareMe flutterShareMe = FlutterShareMe();
+  // if (file != null) {
+  //   response = await flutterShareMe.shareToWhatsApp(
+  //     imagePath: file.path,
+  //     fileType: FileType.image,
+  //     phoneNumber: "+201225536602",
+  //   );
+  // } else {
+  //   response = await flutterShareMe.shareToWhatsApp(msg: "PDF");
   // }
-  //
-  // var url = await storageRef.getDownloadURL();
-  // print("url : $url");
 }

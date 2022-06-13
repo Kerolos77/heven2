@@ -1,15 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:heven2/models/UserDataModel.dart';
 import 'package:heven2/modules/Employ.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../modules/EditProfile.dart';
 import '../../../modules/ProfileCompany.dart';
 import '../../../modules/article.dart';
-import '../../conestant/conestant.dart';
 import 'mainStates.dart';
 
 class MainCubit extends Cubit<States> {
@@ -19,35 +16,9 @@ class MainCubit extends Cubit<States> {
 
   late Database database;
 
-  bool loginUserNameFlag = false;
-
-  bool loginPassFlag = false;
-
-  bool emailFlag = false;
-
-  bool adminFlag = false;
-
-  bool passDigitalFlag = false;
-
-  bool passCapFlag = false;
-
-  bool passNumChar = false;
-
-  bool phoneFlag = false;
-
-  bool passConfirmFlag = false;
-
   String path = 'Heven5Data.db';
 
-  bool attendFlag = true;
-
-  IconData fbIcon = Icons.edit;
-
   bool menuFlag = false;
-
-  bool passFlag = true;
-
-  Color attendColor = Colors.grey;
 
   int currentIndex = 0;
 
@@ -64,6 +35,13 @@ class MainCubit extends Cubit<States> {
   List<Map> monthlyEmployee = [];
 
   List<Map> attendData = [];
+
+  bool connectionFlag = false;
+
+  void changeConnectionFlag(bool value) {
+    connectionFlag = value;
+    emit(ChangeConnectionState());
+  }
 
   void changeIndex(int index) {
     currentIndex = index;
@@ -199,117 +177,6 @@ class MainCubit extends Cubit<States> {
         .rawDelete('DELETE FROM employ WHERE id = ?', ['$id']).then((value) {
       getDataSqf(database);
       emit(DeleteDataBaseState());
-    });
-  }
-
-  void changePassFlag(flag) {
-    passFlag = flag;
-    emit(ChangePassFlagState());
-  }
-
-  void changeEmailFlag(flag) {
-    emailFlag = flag;
-    emit(ChangeemailFlagState());
-  }
-
-  void changeAdminFlag(flag) {
-    adminFlag = flag;
-    emit(ChangeadminFlagState());
-  }
-
-  void changePassDigitalFlag(flag) {
-    passDigitalFlag = flag;
-    emit(ChangepassdigitalFlagState());
-  }
-
-  void changePassCapFlag(flag) {
-    passCapFlag = flag;
-    emit(ChangePasscapFlagState());
-  }
-
-  void changePassNumCharFlag(flag) {
-    passNumChar = flag;
-    emit(ChangePassnumcharFlagState());
-  }
-
-  void changePassConfirmFlag(flag) {
-    passConfirmFlag = flag;
-    emit(ChangePassconfirmFlagState());
-  }
-
-  void changeLoginUserNameFlag(flag) {
-    loginUserNameFlag = flag;
-    emit(ChangeloginusernameState());
-  }
-
-  void changeLoginPassFlag(flag) {
-    loginPassFlag = flag;
-    emit(ChangeloginpassState());
-  }
-
-  void changePhoneFlag(flag) {
-    phoneFlag = flag;
-    emit(ChangephoneState());
-  }
-
-///////////////fire base
-
-  void createUser({
-    required String name,
-    required String email,
-    required String adminKey,
-    required String phone,
-    required String uId,
-  }) async {
-    emit(CreateUserLoadingState());
-    UserDataModel userDataModel =
-        UserDataModel(name, email, phone, uId, adminKey, false);
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uId)
-        .set(userDataModel.toMap())
-        .then((value) {
-      emit(CreateUserSucsessState());
-    }).catchError((error) {
-      CreateUserErrorState(error.toString());
-    });
-  }
-
-  ///// fire Auth function
-  void signUp({
-    required String name,
-    required String email,
-    required String adminKey,
-    required String phone,
-    required String password,
-  }) {
-    emit(SignUpLoadingState());
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) {
-      createUser(
-          email: email,
-          adminKey: adminKey,
-          name: name,
-          phone: phone,
-          uId: value.user!.uid);
-    }).catchError((error) {
-      emit(SignUpErrorState(error.toString()));
-    });
-  }
-
-  void login({
-    required String email,
-    required String password,
-  }) {
-    emit(LoginLoadingState());
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password)
-        .then((value) {
-      constUid = value.user!.uid;
-      emit(LoginSucsessState(value.user!.uid));
-    }).catchError((error) {
-      emit(LoginErrorState(error.toString()));
     });
   }
 

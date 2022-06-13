@@ -13,6 +13,8 @@ class AttendCubit extends Cubit<AttendState> {
   late AttendDataModel attendModel;
   List<dynamic> attendModelList = [];
 
+  String publicDate = DateFormat('yyyy-MM').format(DateTime.now());
+
   static AttendCubit get(context) => BlocProvider.of(context);
 
   void createAttend({
@@ -31,8 +33,7 @@ class AttendCubit extends Cubit<AttendState> {
         .doc(constUid)
         .collection('employ')
         .doc(empId)
-        .collection(
-            'attend ${DateFormat('yyyy-MM').format(DateTime.parse(date))}')
+        .collection('attend $publicDate')
         .doc(id)
         .set(userDataModel.toMap())
         .then((value) {
@@ -53,8 +54,7 @@ class AttendCubit extends Cubit<AttendState> {
         .doc(constUid)
         .collection('employ')
         .doc(empId)
-        .collection(
-            'attend ${DateFormat('yyyy-MM').format(DateTime.parse(date))}')
+        .collection('attend $publicDate')
         .get()
         .then((value) {
       attendModelList = [];
@@ -80,7 +80,7 @@ class AttendCubit extends Cubit<AttendState> {
         .doc(constUid)
         .collection('employ')
         .doc(empId)
-        .collection('attend ${DateFormat('yyyy-MM').format(DateTime.now())}')
+        .collection('attend $publicDate')
         .doc(id)
         .update({
       "endTime": endTime,
@@ -92,5 +92,10 @@ class AttendCubit extends Cubit<AttendState> {
     }).catchError((error) {
       UpdateErrorAttendState(error.toString());
     });
+  }
+
+  void ChangeDate({required String date}) async {
+    publicDate = date;
+    emit(ChangeDateSuccessAttendState());
   }
 }

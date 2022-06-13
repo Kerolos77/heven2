@@ -30,13 +30,14 @@ class Home extends StatelessWidget {
                   context, MaterialPageRoute(builder: (context) => Login()));
             });
             toast(
-                msg: 'LogOut Success',
+                msg: 'تم تسجيل الخروج بنجاح',
                 backColor: Colors.grey.shade300,
                 textColor: Colors.black);
           }
         },
         builder: (context, state) {
           MainCubit cub = MainCubit.get(context);
+          // FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
           return AnimatedStack(
             scaleHeight: 40,
             scaleWidth: 40,
@@ -89,26 +90,21 @@ class Home extends StatelessWidget {
                     size: 20,
                   ),
                 ),
+                const SizedBox(height: 20),
+                IconButton(
+                  onPressed: () {
+                    cub.logout();
+                  },
+                  icon: const Icon(Icons.logout),
+                ),
               ],
             ),
             bottomWidget: Container(),
             foregroundWidget: Scaffold(
               key: scaffoldKey,
-              appBar: AppBar(
-                centerTitle: true,
-                title: Text(
-                  cub.appTitle[cub.currentIndex],
-                ),
-                leading: IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    cub.logout();
-                  },
-                ),
+              body: SafeArea(
+                child: noConnectionCard(child: cub.screens[cub.currentIndex]),
               ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              body: cub.screens[cub.currentIndex],
             ),
           );
         },

@@ -12,16 +12,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await CacheHelper.init();
-
+  late bool isConnected;
   Widget widget;
   String? uId = CacheHelper.getData(key: 'user');
-  print('uId:$uId');
+
   if (uId != null && uId != '') {
     constUid = uId;
     widget = Home();
   } else {
     widget = Login();
   }
+
   runApp(MyApp(startWidget: widget));
 }
 

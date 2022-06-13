@@ -31,3 +31,5 @@ class UpdateErrorAttendState extends AttendState {
 
   UpdateErrorAttendState(this.error);
 }
+
+class ChangeDateSuccessAttendState extends AttendState {}

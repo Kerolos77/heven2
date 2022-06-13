@@ -5,174 +5,175 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:heven2/modules/signup.dart';
 import 'package:heven2/shared/Network/local/cache_helper.dart';
 import 'package:heven2/shared/componants/componants.dart';
-import 'package:heven2/shared/cubit/main/mainCubit.dart';
-import 'package:heven2/shared/cubit/main/mainStates.dart';
 
 import '../layout/home.dart';
+import '../shared/cubit/company/companyCubit.dart';
+import '../shared/cubit/company/companyStates.dart';
 
 class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController usernamecontrol = new TextEditingController();
-  TextEditingController passwordcontrol = new TextEditingController();
-  var formkey = GlobalKey<FormState>();
+  TextEditingController userNameControl = TextEditingController();
+  TextEditingController passwordControl = TextEditingController();
+  var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => MainCubit(),
-        child: BlocConsumer<MainCubit, States>(
+        create: (BuildContext context) => CompanyCubit(),
+        child: BlocConsumer<CompanyCubit, CompanyState>(
           listener: (context, state) {
-            if (state is LoginErrorState) {
+            if (state is LoginErrorUserState) {
               toast(
                   msg: state.error.toString(),
                   backColor: Colors.grey.shade300,
                   textColor: Colors.black);
             }
-            if (state is LoginSucsessState) {
+            if (state is LoginSuccessUserState) {
               CacheHelper.putData(key: "user", value: state.uId).then((value) {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Home()));
               });
               toast(
-                  msg: 'Welcome',
+                  msg: "مرحبا بك",
                   backColor: Colors.grey.shade300,
                   textColor: Colors.black);
             }
           },
           builder: (context, state) {
-            var cub = MainCubit.get(context);
+            CompanyCubit companyCub = CompanyCubit.get(context);
             return Scaffold(
                 backgroundColor: Colors.white,
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Form(
-                      key: formkey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 40,
-                          ),
-                          Image(
-                            image: AssetImage(
-                              'images/heven logo.png',
-                            ),
-                            height: 150,
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Text(
-                            "Welcome Back",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          defaultLoginTextField(
-                              type: TextInputType.emailAddress,
-                              control: usernamecontrol,
-                              icon: Icons.perm_identity,
-                              label: 'Email',
-                              validate: (value) {
-                                if (value.toString().isEmpty) {
-                                  return "Cann be Empty";
-                                }
-                              },
-                              onchange: (value) {
-                                if (!value.toString().isEmpty)
-                                  cub.changeLoginUserNameFlag(true);
-                                else
-                                  cub.changeLoginUserNameFlag(false);
-                              }),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          sufixLoginTextFiled(
-                              type: TextInputType.visiblePassword,
-                              obscure: cub.passFlag,
-                              sufixIcon: cub.passFlag
-                                  ? Icons.remove_red_eye_outlined
-                                  : Icons.visibility_off_outlined,
-                              control: passwordcontrol,
-                              prifixIcon: Icons.lock_outline,
-                              label: 'Password',
-                              onPressSufix: () {
-                                cub.changePassFlag(!cub.passFlag);
-                              },
-                              validator: (value) {
-                                if (value.toString().isEmpty) {
-                                  return "Cann be Empty";
-                                }
-                              },
-                              onchange: (value) {
-                                if (!value.toString().isEmpty)
-                                  cub.changeLoginPassFlag(true);
-                                else
-                                  cub.changeLoginPassFlag(false);
-                              }),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          ConditionalBuilder(
-                            condition: state is! LoginSucsessState,
-                            builder: (context) => defaultButton(
-                                isDone:
-                                    cub.loginPassFlag && cub.loginUserNameFlag,
-                                text: 'Login',
-                                onPress: () {
-                                  if (formkey.currentState!.validate()) {
-                                    print("${state}++++++++++++++++++++++");
-                                    print(usernamecontrol.text);
-                                    print(passwordcontrol.text);
-                                    cub.login(
-                                        email: usernamecontrol.text,
-                                        password: passwordcontrol.text);
-                                  }
-                                }),
-                            fallback: (context) => CupertinoActivityIndicator(),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
+                body: SafeArea(
+                  child: noConnectionCard(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Dont Have An Account ?',
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  color: Colors.black,
+                              const Image(
+                                image: AssetImage(
+                                  'images/Time management.png',
+                                ),
+                                fit: BoxFit.cover,
+                                // height: 150,
+                              ),
+                              Container(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 15.0),
+                                  child: arabicText(
+                                    text: "يسعدنا رجوعك",
+                                    size: 15,
+                                    color: Colors.grey.shade700,
+                                  ),
                                 ),
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => signup(),
-                                      ));
-                                  print('sign up');
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              mainTextField(
+                                  type: TextInputType.emailAddress,
+                                  control: userNameControl,
+                                  icon: CupertinoIcons.mail,
+                                  hint: 'البريد الإلكتروني',
+                                  onchange: (value) {
+                                    if (!value.isEmpty) {
+                                      companyCub.changeLoginUserNameFlag(true);
+                                    } else {
+                                      companyCub.changeLoginUserNameFlag(false);
+                                    }
+                                  }),
+                              companyCub.loginUserNameFlag
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : textRegester(
+                                      text: 'ex : example@gmail.com'),
+                              sufixTextFiled(
+                                type: TextInputType.visiblePassword,
+                                obscure: companyCub.obscurePassFlag,
+                                prifixIcon: companyCub.obscurePassFlag
+                                    ? Icons.remove_red_eye_outlined
+                                    : Icons.visibility_off_outlined,
+                                control: passwordControl,
+                                sufixIcon: CupertinoIcons.lock,
+                                hint: 'كلمة المرور',
+                                onPressPrifix: () {
+                                  companyCub.changeObscurePassFlag(
+                                      !companyCub.obscurePassFlag);
                                 },
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                onchange: (value) {
+                                  if (!value.isEmpty) {
+                                    companyCub.changeLoginPassFlag(true);
+                                  } else {
+                                    companyCub.changeLoginPassFlag(false);
+                                  }
+                                },
+                              ),
+                              companyCub.loginPassFlag
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : textRegester(text: 'ex : 12345678'),
+                              ConditionalBuilder(
+                                condition: state is! LoginSuccessUserState,
+                                builder: (context) => defaultButton(
+                                    isDone: companyCub.loginPassFlag &&
+                                        companyCub.loginUserNameFlag,
+                                    text: 'تسجيل الدخول',
+                                    onPress: () {
+                                      if (formKey.currentState!.validate()) {
+                                        print("${state}++++++++++++++++++++++");
+                                        print(userNameControl.text);
+                                        print(passwordControl.text);
+                                        companyCub.login(
+                                            email: userNameControl.text,
+                                            password: passwordControl.text);
+                                      }
+                                    }),
+                                fallback: (context) =>
+                                    CupertinoActivityIndicator(),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SignUp(),
+                                          ));
+                                    },
+                                    child: arabicText(
+                                      text: 'سجل الان',
+                                      size: 10,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                  arabicText(
+                                    text: 'ليس لديك حساب ؟',
+                                    size: 10,
+                                    color: Colors.black,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

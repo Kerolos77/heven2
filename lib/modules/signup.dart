@@ -5,248 +5,253 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../shared/componants/componants.dart';
-import '../shared/cubit/main/mainCubit.dart';
-import '../shared/cubit/main/mainStates.dart';
+import '../shared/cubit/company/companyCubit.dart';
+import '../shared/cubit/company/companyStates.dart';
 import 'login.dart';
 
-class signup extends StatefulWidget {
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
+
   @override
-  _signupState createState() => _signupState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _signupState extends State<signup> {
-  var formkey = GlobalKey<FormState>();
-  TextEditingController emailcontrol = new TextEditingController();
-  TextEditingController passwordcontrol = new TextEditingController();
-  TextEditingController adminkeycontrol = new TextEditingController();
-  TextEditingController confirmpasswordcontrol = new TextEditingController();
-  TextEditingController phonecontrol = new TextEditingController();
-  TextEditingController namecontrol = new TextEditingController();
+class _SignUpState extends State<SignUp> {
+  var formKey = GlobalKey<FormState>();
+  TextEditingController emailControl = TextEditingController();
+  TextEditingController passwordControl = TextEditingController();
+  TextEditingController adminKeyControl = TextEditingController();
+  TextEditingController confirmPasswordControl = TextEditingController();
+  TextEditingController phoneControl = TextEditingController();
+  TextEditingController nameControl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => MainCubit(),
-        child: BlocConsumer<MainCubit, States>(
-          listener: (context, state) {
-            if (state is SignUpErrorState) {
-              Fluttertoast.showToast(
-                msg: state.error,
-                toastLength: Toast.LENGTH_LONG,
-                backgroundColor: Colors.red[20],
-                textColor: Colors.white,
-              );
-            }
-            if (state is CreateUserSucsessState) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Login(),
-                  ));
-            }
-          },
-          builder: (context, state) {
-            var cub = MainCubit.get(context);
-            return Scaffold(
-                backgroundColor: Colors.white,
-                appBar: AppBar(
-                  title: Text(
-                    "",
-                  ),
-                ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Form(
-                      key: formkey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          defaultLoginTextField(
-                            type: TextInputType.emailAddress,
-                            control: emailcontrol,
-                            icon: Icons.perm_identity,
-                            label: 'Email',
-                            validate: (value) {
-                              if (value.isEmpty) return 'Email is empty';
-                            },
-                            onchange: (value) {
-                              if (value.contains('@') && value.contains('.com'))
-                                cub.changeEmailFlag(true);
-                              else
-                                cub.changeEmailFlag(false);
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          defaultLoginTextField(
-                            type: TextInputType.number,
-                            control: adminkeycontrol,
-                            icon: Icons.admin_panel_settings_outlined,
-                            label: 'Admin Key',
-                            validate: (value) {
-                              if (value.isEmpty) return 'Admin key is empty';
-                            },
-                            onchange: (value) {
-                              if (!value.contains('11'))
-                                cub.changeAdminFlag(true);
-                              else
-                                cub.changeAdminFlag(false);
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          defaultLoginTextField(
-                            type: TextInputType.emailAddress,
-                            control: namecontrol,
-                            icon: Icons.title_outlined,
-                            label: 'User Name',
-                            validate: (value) {
-                              if (value.isEmpty) return 'Name is empty';
-                            },
-                            onchange: (value) {},
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          defaultLoginTextField(
-                            type: TextInputType.number,
-                            control: phonecontrol,
-                            icon: Icons.phone,
-                            label: 'Phone',
-                            validate: (value) {
-                              if (value.isEmpty) return 'Phone is empty';
-                            },
-                            onchange: (value) {
-                              if (!value.contains('11'))
-                                cub.changePhoneFlag(true);
-                              else
-                                cub.changePhoneFlag(false);
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          sufixLoginTextFiled(
-                              type: TextInputType.visiblePassword,
-                              obscure: cub.passFlag,
-                              sufixIcon: cub.passFlag
-                                  ? Icons.remove_red_eye_outlined
-                                  : Icons.visibility_off_outlined,
-                              control: passwordcontrol,
-                              prifixIcon: Icons.lock_outline,
-                              label: 'Password',
-                              onPressSufix: () {
-                                cub.changePassFlag(!cub.passFlag);
-                              },
-                              validator: (value) {
-                                if (value.isEmpty) return 'passowrd is empty';
-                              },
+      create: (BuildContext context) => CompanyCubit(),
+      child: BlocConsumer<CompanyCubit, CompanyState>(
+        listener: (context, state) {
+          print(state);
+          if (state is SignUpErrorUserState) {
+            Fluttertoast.showToast(
+              msg: state.error,
+              toastLength: Toast.LENGTH_LONG,
+              backgroundColor: Colors.red[20],
+              textColor: Colors.white,
+            );
+          }
+          if (state is CreateSuccessUserState) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Login(),
+                ));
+          }
+        },
+        builder: (context, state) {
+          CompanyCubit companyCub = CompanyCubit.get(context);
+          return Scaffold(
+              backgroundColor: Colors.white,
+              body: SafeArea(
+                child: noConnectionCard(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Image(
+                              image: AssetImage(
+                                'images/Time management.png',
+                              ),
+                              fit: BoxFit.cover,
+                              // height: 150,
+                            ),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: arabicText(
+                                  text: "يسعدنا انضمام شركتك الينا",
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            mainTextField(
+                              type: TextInputType.emailAddress,
+                              control: emailControl,
+                              icon: CupertinoIcons.mail,
+                              hint: 'البريد الالكتروني',
                               onchange: (value) {
-                                RegExp regExcap =
-                                    new RegExp(r"(?=.*[a-z])(?=.*[A-Z])\w+");
-                                RegExp regExdigit =
-                                    new RegExp(r"(?=.*[0-9])\w+");
-                                if (regExdigit.hasMatch(value))
-                                  cub.changePassDigitalFlag(true);
-                                else
-                                  cub.changePassDigitalFlag(false);
-                                if (value.length >= 8)
-                                  cub.changePassNumCharFlag(true);
-                                else
-                                  cub.changePassNumCharFlag(false);
-                                if (regExcap.hasMatch(value))
-                                  cub.changePassCapFlag(true);
-                                else
-                                  cub.changePassCapFlag(false);
-                              }),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          sufixLoginTextFiled(
-                              type: TextInputType.visiblePassword,
-                              obscure: cub.passFlag,
-                              sufixIcon: cub.passFlag
-                                  ? Icons.remove_red_eye_outlined
-                                  : Icons.visibility_off_outlined,
-                              control: confirmpasswordcontrol,
-                              prifixIcon: Icons.confirmation_num_outlined,
-                              label: 'Confirm Password',
-                              onPressSufix: () {
-                                cub.changePassFlag(!cub.passFlag);
+                                if (!value.isEmpty &&
+                                    value.contains('@') &&
+                                    value.contains('.com') &&
+                                    !value.contains(' ')) {
+                                  companyCub.changeEmailFlag(true);
+                                } else {
+                                  companyCub.changeEmailFlag(false);
+                                }
                               },
-                              validator: (value) {
-                                if (value.isEmpty)
-                                  return 'Confirm passowrd is empty';
-                              },
+                            ),
+                            companyCub.emailFlag
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : textRegester(text: 'ex : example@gmail.com'),
+                            mainTextField(
+                              type: TextInputType.emailAddress,
+                              control: nameControl,
+                              icon: CupertinoIcons.t_bubble,
+                              hint: 'اسم الشركة',
                               onchange: (value) {
-                                if (value == passwordcontrol.text)
-                                  cub.changePassConfirmFlag(true);
-                                else
-                                  cub.changePassConfirmFlag(false);
-                              }),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          valedateRow(
-                              flag: cub.passNumChar,
-                              falseText: " atlast 8 characters",
-                              trueText: " Done"),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          valedateRow(
-                              flag: cub.passDigitalFlag,
-                              falseText: " contane digits",
-                              trueText: " Done"),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          valedateRow(
-                              flag: cub.passCapFlag,
-                              falseText: " contane upper & lowercase letters",
-                              trueText: " Done"),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          valedateRow(
-                              flag: cub.passConfirmFlag,
-                              falseText: " not match aconfirm",
-                              trueText: " Done"),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          ConditionalBuilder(
-                            condition: state is! LoginSucsessState,
-                            builder: (context) => defaultButton(
-                                isDone: cub.emailFlag &&
-                                    cub.adminFlag &&
-                                    cub.passCapFlag &&
-                                    cub.passNumChar &&
-                                    cub.passDigitalFlag &&
-                                    cub.passConfirmFlag &&
-                                    cub.phoneFlag,
-                                text: 'Sign Up',
-                                onPress: () {
-                                  if (formkey.currentState!.validate()) {
-                                    cub.signUp(
-                                        name: namecontrol.text,
-                                        email: emailcontrol.text,
-                                        adminKey: adminkeycontrol.text,
-                                        phone: phonecontrol.text,
-                                        password: passwordcontrol.text);
+                                if (!value.isEmpty) {
+                                  companyCub.changeNameFlag(true);
+                                } else {
+                                  companyCub.changeNameFlag(false);
+                                }
+                              },
+                            ),
+                            companyCub.nameFlag
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : textRegester(text: 'ex : Attendants'),
+                            mainTextField(
+                              type: TextInputType.number,
+                              control: phoneControl,
+                              icon: CupertinoIcons.phone,
+                              hint: 'رقم الهاتف',
+                              onchange: (value) {
+                                if (!value.contains(' ') && !value.isEmpty) {
+                                  companyCub.changePhoneFlag(true);
+                                } else {
+                                  companyCub.changePhoneFlag(false);
+                                }
+                              },
+                            ),
+                            companyCub.phoneFlag
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : textRegester(text: 'ex : 01234567890'),
+                            sufixTextFiled(
+                                type: TextInputType.visiblePassword,
+                                obscure: companyCub.obscurePassFlag,
+                                prifixIcon: companyCub.obscurePassFlag
+                                    ? Icons.remove_red_eye_outlined
+                                    : Icons.visibility_off_outlined,
+                                control: passwordControl,
+                                sufixIcon: CupertinoIcons.lock,
+                                hint: 'كلمة المرور',
+                                onPressPrifix: () {
+                                  companyCub.changeObscurePassFlag(
+                                      !companyCub.obscurePassFlag);
+                                },
+                                onchange: (value) {
+                                  if (!value.isEmpty &&
+                                      value.toString().length >= 8) {
+                                    companyCub.changePassNumCharFlag(true);
+                                  } else {
+                                    companyCub.changePassNumCharFlag(false);
+                                  }
+                                  if (value == confirmPasswordControl.text) {
+                                    companyCub.changePassConfirmFlag(true);
+                                  } else {
+                                    companyCub.changePassConfirmFlag(false);
                                   }
                                 }),
-                            fallback: (context) => CupertinoActivityIndicator(),
-                          ),
-                        ],
+                            companyCub.passNumChar
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : textRegester(text: 'ex : 12345678'),
+                            sufixTextFiled(
+                                type: TextInputType.visiblePassword,
+                                obscure: companyCub.obscureConfirmFlag,
+                                prifixIcon: companyCub.obscureConfirmFlag
+                                    ? Icons.remove_red_eye_outlined
+                                    : Icons.visibility_off_outlined,
+                                control: confirmPasswordControl,
+                                sufixIcon: CupertinoIcons.lock,
+                                hint: 'تأكيد كلمة المرور',
+                                onPressPrifix: () {
+                                  companyCub.changeObscureConfirmFlag(
+                                      !companyCub.obscureConfirmFlag);
+                                },
+                                onchange: (value) {
+                                  if (!value.isEmpty &&
+                                      value == passwordControl.text) {
+                                    companyCub.changePassConfirmFlag(true);
+                                  } else {
+                                    companyCub.changePassConfirmFlag(false);
+                                  }
+                                }),
+                            companyCub.passConfirmFlag
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : textRegester(
+                                    text: 'ex : Not Identical Password'),
+                            ConditionalBuilder(
+                              condition: state is! LoginSuccessUserState,
+                              builder: (context) => defaultButton(
+                                  isDone: companyCub.emailFlag &&
+                                      companyCub.passNumChar &&
+                                      companyCub.passConfirmFlag &&
+                                      companyCub.phoneFlag &&
+                                      companyCub.nameFlag,
+                                  text: 'تسجيل',
+                                  onPress: () {
+                                    if (formKey.currentState!.validate()) {
+                                      companyCub.signUp(
+                                          name: nameControl.text,
+                                          email: emailControl.text,
+                                          adminKey: adminKeyControl.text,
+                                          phone: phoneControl.text,
+                                          password: passwordControl.text);
+                                    }
+                                  }),
+                              fallback: (context) =>
+                                  CupertinoActivityIndicator(),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Login(),
+                                        ));
+                                    print('Login');
+                                  },
+                                  child: arabicText(
+                                      text: 'تسجيل الدخول',
+                                      size: 10,
+                                      color: Colors.blue),
+                                ),
+                                arabicText(
+                                    text: 'لديك حساب بالفعل ؟',
+                                    size: 10,
+                                    color: Colors.black),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ));
-          },
-        ));
+                ),
+              ));
+        },
+      ),
+    );
   }
 }

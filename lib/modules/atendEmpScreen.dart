@@ -1,16 +1,12 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:heven2/calculate/CalculateSalary.dart';
-import 'package:heven2/calculate/CalculateTime.dart';
 import 'package:heven2/shared/componants/componants.dart';
 import 'package:heven2/shared/cubit/attend/attendCubit.dart';
 import 'package:intl/intl.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
-import '../mobile.dart';
+import '../pdfHelper/PdfHelper.dart';
 import '../shared/cubit/attend/attendStates.dart';
 
 class AttendScreen extends StatelessWidget {
@@ -18,13 +14,15 @@ class AttendScreen extends StatelessWidget {
 
   String id;
 
+  int Salary;
+
   // MainCubit cub;
 
   AttendScreen({
     Key? key,
     required this.name,
     required this.id,
-    // required this.cub,
+    required this.Salary,
   }) : super(key: key);
 
   @override
@@ -50,33 +48,90 @@ class AttendScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              title: Text(name),
+              title: Text(
+                name,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    attendCub.publicDate,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.date_range,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now(),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: Colors.grey.shade300,
+                              // header background color
+                              onPrimary: Colors.black,
+                              // header text color
+                              onSurface: Colors.black, // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                primary: Colors.black, // button text color
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    ).then((date) {
+                      print(date);
+                      attendCub.ChangeDate(
+                          date: DateFormat('yyyy-MM').format(date!));
+                      attendCub.getAttend(
+                          empId: id, date: DateFormat('yyyy-MM').format(date));
+                    });
+                  },
+                ),
+              ],
             ),
             body: Container(
               color: Colors.white,
               child: Center(
                 child: ConditionalBuilder(
                   condition: state is! GetLoadingAttendState,
-                  builder: (context) => attendCub.attendModelList.isEmpty
-                      ? Center(
-                          child: Icon(
-                            Icons.announcement_outlined,
-                            color: Colors.grey.shade300,
-                            size: 200,
-                          ),
-                        )
-                      : LiquidPullToRefresh(
-                          backgroundColor: Colors.white,
-                          color: Colors.grey.shade500,
-                          showChildOpacityTransition: false,
-                          onRefresh: () async {
-                            attendCub.getAttend(
-                                date: DateFormat('yyyy-MM-dd')
-                                    .format(DateTime.now()),
-                                empId: id);
-                            print(attendCub.attendModelList);
-                          },
-                          child: ListView.separated(
+                  builder: (context) => LiquidPullToRefresh(
+                    backgroundColor: Colors.white,
+                    color: Colors.grey.shade500,
+                    showChildOpacityTransition: false,
+                    onRefresh: () async {
+                      attendCub.getAttend(
+                          date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                          empId: id);
+                      print(attendCub.attendModelList);
+                    },
+                    child: attendCub.attendModelList.isEmpty
+                        ? Center(
+                            child: Icon(
+                              Icons.announcement_outlined,
+                              color: Colors.grey.shade300,
+                              size: 200,
+                            ),
+                          )
+                        : ListView.separated(
                             itemBuilder: (BuildContext context, int index) =>
                                 itemAttend(attendCub.attendModelList[index]),
                             itemCount: attendCub.attendModelList.length,
@@ -91,9 +146,11 @@ class AttendScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                  ),
                   fallback: (context) => const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -107,7 +164,7 @@ class AttendScreen extends StatelessWidget {
                 FloatingActionButton(
                   elevation: 10,
                   onPressed: () {
-                    _createPDF(attendCub);
+                    PdfHelper.createPDF(attendCub, name, id, Salary);
                   },
                   child: Icon(
                     Icons.picture_as_pdf_outlined,
@@ -121,61 +178,5 @@ class AttendScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<void> _createPDF(AttendCubit attendCub) async {
-    String timeCount = '0:0';
-    for (var i = 0; i < attendCub.attendModelList.length; i++) {
-      timeCount = CalculateTime.totalTime(
-          time: attendCub.attendModelList[i]['timeInDay'],
-          totalTime: timeCount);
-    }
-    timeCount = CalculateTime.splitTime(time: timeCount);
-    timeCount = CalculateSalary.calculateSalary(time: timeCount);
-    final pdf = pw.Document();
-    pdf.addPage(pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(10), // This is the page margin
-        build: (pw.Context context) {
-          return <pw.Widget>[
-            pw.Header(
-              level: 0,
-              child: pw.Text(
-                'Attendance Report \n\nname : $name\n',
-                style: pw.TextStyle(
-                  fontSize: 12,
-                  fontWeight: pw.FontWeight.bold,
-                  height: 1.5,
-                ),
-              ),
-            ),
-            pw.Table.fromTextArray(
-              context: context,
-              data: [
-                ['Num', 'Date', 'Start Time', 'End Time', 'Duration'],
-                for (var i = 0; i < attendCub.attendModelList.length; i++)
-                  [
-                    i + 1,
-                    attendCub.attendModelList[i]['date'],
-                    attendCub.attendModelList[i]['startTime'],
-                    attendCub.attendModelList[i]['endTime'],
-                    attendCub.attendModelList[i]['timeInDay'],
-                  ],
-              ],
-              cellAlignment: pw.Alignment.center,
-              cellStyle: const pw.TextStyle(fontSize: 12),
-            ),
-            pw.Text(
-              '$timeCount',
-              style: pw.TextStyle(
-                fontSize: 20,
-                fontWeight: pw.FontWeight.bold,
-                height: 1.5,
-              ),
-            ),
-          ];
-        }));
-    saveAndLaunchFile(await pdf.save(),
-        'Attend Repo(${DateFormat('yyyy-MM-dd').format(DateTime.now())}) $id .pdf');
   }
 }

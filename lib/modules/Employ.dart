@@ -26,7 +26,7 @@ class Employ extends StatelessWidget {
         if (state is CreateSuccessEmpState) {
           Navigator.pop(context);
           toast(
-              msg: 'Employee Created Successfully',
+              msg: 'تم إضافة الموظف بنجاح',
               backColor: Colors.grey.shade300,
               textColor: Colors.black);
         }
@@ -40,7 +40,7 @@ class Employ extends StatelessWidget {
         EmpCubit empCub = EmpCubit.get(context);
         return Scaffold(
           key: scaffoldKey,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blue.shade50,
           body: Center(
             child: ConditionalBuilder(
               condition: state is! GetLoadingEmpState,
@@ -56,27 +56,30 @@ class Employ extends StatelessWidget {
                       onRefresh: () async {
                         empCub.getEmp();
                       },
-                      child: ListView.separated(
-                          itemBuilder: (BuildContext context, int index) =>
-                              itemNewEmp(empCub.empModelList[index], context),
-                          itemCount: empCub.empModelList.length,
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const SizedBox(
-                                height: 10,
-                              )),
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) =>
+                            itemNewEmp(empCub.empModelList[index], context),
+                        itemCount: empCub.empModelList.length,
+                      ),
                     ),
               fallback: (context) => const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+          bottomNavigationBar: Container(
+            height: 35,
+            color: Colors.grey.shade300,
+          ),
+          floatingActionButtonLocation: empCub.floatButtonFlag
+              ? FloatingActionButtonLocation.centerDocked
+              : FloatingActionButtonLocation.startDocked,
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (empCub.floatButtonFlag) {
-                print("timeflag");
                 if (formKey.currentState!.validate()) {
-                  print("validate");
                   empCub.createEmp(
                     name: nameControl.text,
                     salary: salaryControl.text,
@@ -105,7 +108,8 @@ class Employ extends StatelessWidget {
                 empCub.changeBottomSheetState(icon: Icons.edit, flag: true);
               }
             },
-            elevation: 0,
+            elevation: 8,
+            heroTag: "fabEmp",
             backgroundColor: Colors.grey.shade300,
             mini: true,
             child: const Icon(
