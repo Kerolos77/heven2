@@ -1,16 +1,26 @@
 # heven2
 
-A new Flutter project.
+*this project solv attendance problim for companyes* 
+*the attendance problim is the main problim in any company*
 
-## Getting Started
+# how heven2 solve this problim 
 
-This project is a starting point for a Flutter application.
+## steps 
 
-A few resources to get you started if this is your first Flutter project:
+* 1. the ownar of company create an company email in app and shard it of manegers and Supervisors*
+* 2. the employ comes on Supervisors in start day and end day to registration of adttendance*
+* 3. the Supervisors take the attendanc by one click in employ card*
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# featur
+* 1. calculate work day hour for all employ*
+* 2. sum work day hour to calculate work week hour*
+* 3. calculate the salary for employ*
+* 4. get company location using Google Maps*
+* 5. lock the edit profile for company on the Supervisors and open it for owner only*
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Technologies used 
+
+*1. DataBase --> firebase*
+*2. State manegment --> Cubit*
+*3. GoogleMaps*
+
