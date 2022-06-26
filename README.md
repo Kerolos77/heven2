@@ -1,6 +1,6 @@
 # heven2
 
-*this project solv attendance problim for companyes* 
+*this project solv attendance problim for companyes * 
 *the attendance problim is the main problim in any company*
 
 # how heven2 solve this problim 
@@ -20,7 +20,7 @@
 
 # Technologies used 
 
-*1. DataBase --> firebase*
-*2. State manegment --> Cubit*
-*3. GoogleMaps*
+* 1. DataBase --> firebase*
+* 2. State manegment --> Cubit*
+* 3. GoogleMaps*
 
