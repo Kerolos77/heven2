@@ -1,7 +1,7 @@
 # heven2
 
-*this project solv attendance problim for companyes * 
-*the attendance problim is the main problim in any company*
+* this project solv attendance problim for companyes * 
+* the attendance problim is the main problim in any company *
 
 # how heven2 solve this problim 
 
